@@ -44,6 +44,7 @@ import {
   flushLoader,
   renderLoader,
   setExtraHeight,
+  updateTranslationSource,
 } from "@modules/ui/dom";
 import { disableNativeLyricsFocus } from "@modules/ui/nativeLyricsFocus";
 import { getRelativeLayoutBounds, langCodesMatch, languageMatchesAny, log } from "@utils";
@@ -743,6 +744,7 @@ async function processBatchTranslationsAndRomanizations(
   // 1. Identify what needs to be translated/romanized
   lyrics.forEach((item, index) => {
     if (item.isInstrumental) return;
+    if (item.words === t("lyrics_notFound")) return;
 
     const lineData = linesData[index];
     const lyricElement = lineData.lyricElement;
@@ -851,6 +853,12 @@ async function processBatchTranslationsAndRomanizations(
         });
         if (isStale()) return;
 
+        if (response.translationSource) {
+          updateTranslationSource(response.translationSource);
+        } else if (response.translationError) {
+          updateTranslationSource("error");
+        }
+
         if (!sourceLanguage && response.detectedLanguage) {
           sourceLanguage = response.detectedLanguage;
           log(LOG_PREFIX, "Determined language via translation batch: " + sourceLanguage);
@@ -861,7 +869,10 @@ async function processBatchTranslationsAndRomanizations(
         response.results.forEach((result, i) => {
           if (result) {
             const originalIndex = translationBatch[i].index;
-            injectTranslation(linesData[originalIndex].lyricElement, result.translatedText);
+            const originalText = translationBatch[i].text;
+            if (!isSameText(result.translatedText, originalText)) {
+              injectTranslation(linesData[originalIndex].lyricElement, result.translatedText);
+            }
           }
         });
         lyricsElementAdded();
