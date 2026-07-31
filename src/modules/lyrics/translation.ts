@@ -332,3 +332,8 @@ export async function clearTranslationCache(): Promise<void> {
     log(TRANSLATION_ERROR_LOG, "Error clearing local cache", e);
   }
 }
+
+export function clearMemoryTranslationCache(): void {
+  cache.romanization.clear();
+  cache.translation.clear();
+}

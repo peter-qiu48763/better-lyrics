@@ -15,7 +15,7 @@ import type { Lyric, LyricSourceResult, ProviderParameters } from "./providers/s
 import { getLyrics, newSourceMap, providerPriority } from "./providers/shared";
 import type { YTLyricSourceResult } from "./providers/yt";
 import { getSongAlbum, getSongMetadata, type SegmentMap } from "./requestSniffer/requestSniffer";
-import { clearCache as clearTranslationCache } from "./translation";
+import { clearMemoryTranslationCache } from "./translation";
 import { animEngineState } from "@modules/ui/animationEngine";
 
 const hideInstrumentalOnly = registerThemeSetting("blyrics-hide-instrumental-only", false, true);
@@ -123,7 +123,7 @@ export async function createLyrics(detail: PlayerDetails, signal: AbortSignal): 
       log("Not Switching between audio/video", isAVSwitch, segmentMap);
       renderLoader();
       shouldCleanupLoader = true;
-      clearTranslationCache();
+      clearMemoryTranslationCache();
       matchingSong = await getSongMetadata(videoId, 250, signal);
       segmentMap = matchingSong?.segmentMap || null;
       AppState.areLyricsLoaded = false;
