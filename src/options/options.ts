@@ -344,7 +344,7 @@ const restoreOptions = (): void => {
   ];
 
   const syncKeys = readKeys.filter(k => k !== "geminiApiKey");
-  chrome.storage.local.get("geminiApiKey", (localRaw) => {
+  chrome.storage.local.get("geminiApiKey", localRaw => {
     const geminiApiKey = (localRaw as any).geminiApiKey ?? defaultOptions.geminiApiKey;
     chrome.storage.sync.get(syncKeys, (raw: { [key: string]: any }) => {
       setOptionsInForm({
@@ -388,7 +388,9 @@ const setOptionsInForm = (items: Options): void => {
   (document.getElementById("translate") as HTMLInputElement).checked = items.isTranslateEnabled;
   (document.getElementById("translationProvider") as HTMLSelectElement).value = items.translationProvider || "google";
   (document.getElementById("geminiApiKey") as HTMLInputElement).value = items.geminiApiKey || "";
-  renderGeminiModelsList(items.geminiModelFallback || ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash"]);
+  renderGeminiModelsList(
+    items.geminiModelFallback || ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash"]
+  );
   (document.getElementById("geminiTranslationMode") as HTMLSelectElement).value =
     items.geminiTranslationMode || "speed";
   (document.getElementById("translationLanguage") as HTMLInputElement).value = items.translationLanguage;

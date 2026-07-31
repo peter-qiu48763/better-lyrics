@@ -297,9 +297,7 @@ export function clearCache(): void {
   cache.translation.clear();
   try {
     chrome.storage.local.get(null).then(items => {
-      const keysToRemove = Object.keys(items).filter(
-        key => key.startsWith("gemini_")
-      );
+      const keysToRemove = Object.keys(items).filter(key => key.startsWith("gemini_"));
       if (keysToRemove.length > 0) {
         chrome.storage.local.remove(keysToRemove);
       }
@@ -322,9 +320,7 @@ export async function clearTranslationCache(): Promise<void> {
   cache.translation.clear();
   try {
     const items = await chrome.storage.local.get(null);
-    const keysToRemove = Object.keys(items).filter(
-      key => key.startsWith("gemini_")
-    );
+    const keysToRemove = Object.keys(items).filter(key => key.startsWith("gemini_"));
     if (keysToRemove.length > 0) {
       await chrome.storage.local.remove(keysToRemove);
     }
