@@ -43,6 +43,10 @@ interface Options {
   pipMarqueeEnabled: boolean;
   pipProgressBarEnabled: boolean;
   isTranslateEnabled: boolean;
+  translationProvider: "google" | "gemini";
+  geminiApiKey: string;
+  geminiModelFallback: string[];
+  geminiTranslationMode?: "speed" | "quality";
   translationLanguage: string;
   isCursorAutoHideEnabled: boolean;
   isRomanizationEnabled: boolean;
@@ -109,6 +113,19 @@ const getOptionsFromForm = (): Options => {
     pipMarqueeEnabled: (document.getElementById("pipMarqueeEnabled") as HTMLInputElement).checked,
     pipProgressBarEnabled: (document.getElementById("pipProgressBarEnabled") as HTMLInputElement).checked,
     isTranslateEnabled: (document.getElementById("translate") as HTMLInputElement).checked,
+    translationProvider: (document.getElementById("translationProvider") as HTMLSelectElement).value as
+      | "google"
+      | "gemini",
+    geminiApiKey: (document.getElementById("geminiApiKey") as HTMLInputElement).value,
+    geminiModelFallback: Array.from(document.getElementById("geminiModelFallbackList")!.children)
+      .filter(c => {
+        const checkbox = c.querySelector("input[type='checkbox']") as HTMLInputElement | null;
+        return checkbox ? checkbox.checked : true;
+      })
+      .map(c => c.getAttribute("data-model")!),
+    geminiTranslationMode: (document.getElementById("geminiTranslationMode") as HTMLSelectElement).value as
+      | "speed"
+      | "quality",
     translationLanguage: (document.getElementById("translationLanguage") as HTMLInputElement).value,
     isCursorAutoHideEnabled: (document.getElementById("cursorAutoHide") as HTMLInputElement).checked,
     isRomanizationEnabled: (document.getElementById("isRomanizationEnabled") as HTMLInputElement).checked,
@@ -162,12 +179,15 @@ function setDockControlsOrderInForm(order: string[]): void {
 
 // Function to save options to Chrome storage
 const saveOptionsToStorage = (options: Options): void => {
-  chrome.storage.sync.set(options, () => {
-    chrome.tabs.query({ url: "https://music.youtube.com/*" }, tabs => {
-      tabs.forEach(tab => {
-        chrome.tabs.sendMessage(tab.id!, {
-          action: "updateSettings",
-          settings: options,
+  const { geminiApiKey, ...syncOptions } = options;
+  chrome.storage.local.set({ geminiApiKey }, () => {
+    chrome.storage.sync.set(syncOptions, () => {
+      chrome.tabs.query({ url: "https://music.youtube.com/*" }, tabs => {
+        tabs.forEach(tab => {
+          chrome.tabs.sendMessage(tab.id!, {
+            action: "updateSettings",
+            settings: options,
+          });
         });
       });
     });
@@ -300,6 +320,10 @@ const restoreOptions = (): void => {
     pipMarqueeEnabled: true,
     pipProgressBarEnabled: true,
     isTranslateEnabled: false,
+    translationProvider: "google",
+    geminiApiKey: "",
+    geminiModelFallback: ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash"],
+    geminiTranslationMode: "speed",
     translationLanguage: "en",
     isRomanizationEnabled: false,
     preferredProviderList: [
@@ -346,19 +370,24 @@ const restoreOptions = (): void => {
     "isUnisonAutoHideInFullscreenEnabled",
   ];
 
-  chrome.storage.sync.get(readKeys, (raw: { [key: string]: any }) => {
-    setOptionsInForm({
-      ...defaultOptions,
-      ...(raw as Options),
-      letterWavePref: migrateLetterWavePref(raw),
-      isControlsDockEnabled:
-        raw.isControlsDockEnabled ?? raw.isUnisonPinnedDockEnabled ?? defaultOptions.isControlsDockEnabled,
-      controlsDockPosition:
-        raw.controlsDockPosition ?? raw.unisonPinnedDockPosition ?? defaultOptions.controlsDockPosition,
-      isControlsDockAutoHideInFullscreenEnabled:
-        raw.isControlsDockAutoHideInFullscreenEnabled ??
-        raw.isUnisonAutoHideInFullscreenEnabled ??
-        defaultOptions.isControlsDockAutoHideInFullscreenEnabled,
+  const syncKeys = readKeys.filter(k => k !== "geminiApiKey");
+  chrome.storage.local.get("geminiApiKey", localRaw => {
+    const geminiApiKey = (localRaw as any).geminiApiKey ?? defaultOptions.geminiApiKey;
+    chrome.storage.sync.get(syncKeys, (raw: { [key: string]: any }) => {
+      setOptionsInForm({
+        ...defaultOptions,
+        ...(raw as Options),
+        letterWavePref: migrateLetterWavePref(raw),
+        geminiApiKey,
+        isControlsDockEnabled:
+          raw.isControlsDockEnabled ?? raw.isUnisonPinnedDockEnabled ?? defaultOptions.isControlsDockEnabled,
+        controlsDockPosition:
+          raw.controlsDockPosition ?? raw.unisonPinnedDockPosition ?? defaultOptions.controlsDockPosition,
+        isControlsDockAutoHideInFullscreenEnabled:
+          raw.isControlsDockAutoHideInFullscreenEnabled ??
+          raw.isUnisonAutoHideInFullscreenEnabled ??
+          defaultOptions.isControlsDockAutoHideInFullscreenEnabled,
+      });
     });
   });
 
@@ -390,6 +419,13 @@ const setOptionsInForm = (items: Options): void => {
   (document.getElementById("pipMarqueeEnabled") as HTMLInputElement).checked = items.pipMarqueeEnabled;
   (document.getElementById("pipProgressBarEnabled") as HTMLInputElement).checked = items.pipProgressBarEnabled;
   (document.getElementById("translate") as HTMLInputElement).checked = items.isTranslateEnabled;
+  (document.getElementById("translationProvider") as HTMLSelectElement).value = items.translationProvider || "google";
+  (document.getElementById("geminiApiKey") as HTMLInputElement).value = items.geminiApiKey || "";
+  renderGeminiModelsList(
+    items.geminiModelFallback || ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash"]
+  );
+  (document.getElementById("geminiTranslationMode") as HTMLSelectElement).value =
+    items.geminiTranslationMode || "speed";
   (document.getElementById("translationLanguage") as HTMLInputElement).value = items.translationLanguage;
   (document.getElementById("isRomanizationEnabled") as HTMLInputElement).checked = items.isRomanizationEnabled;
   (document.getElementById("uiLanguage") as HTMLSelectElement).value = items.uiLanguage;
@@ -635,6 +671,57 @@ function initLetterWaveSwitch(): void {
 
 // -- Display Language Dropdown --------------------------
 
+function renderGeminiModelsList(enabledModels: string[]) {
+  const list = document.getElementById("geminiModelFallbackList");
+  if (!list) return;
+  list.innerHTML = "";
+
+  const ALL_GEMINI_MODELS = ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash"];
+  const allModels = [...enabledModels, ...ALL_GEMINI_MODELS.filter(m => !enabledModels.includes(m))];
+
+  allModels.forEach(model => {
+    const isChecked = enabledModels.includes(model);
+    const li = document.createElement("li");
+    li.className = "sortable-item";
+    if (!isChecked) {
+      li.classList.add("disabled-item");
+    }
+    li.setAttribute("data-model", model);
+
+    const handleElem = document.createElement("span");
+    handleElem.classList.add("sortable-handle");
+    li.appendChild(handleElem);
+
+    const labelElem = document.createElement("label");
+    labelElem.classList.add("checkbox-container");
+
+    const checkboxElem = document.createElement("input");
+    checkboxElem.type = "checkbox";
+    checkboxElem.checked = isChecked;
+    checkboxElem.addEventListener("change", () => {
+      if (checkboxElem.checked) {
+        li.classList.remove("disabled-item");
+      } else {
+        li.classList.add("disabled-item");
+      }
+      saveOptions();
+    });
+    labelElem.appendChild(checkboxElem);
+
+    const checkmarkElem = document.createElement("span");
+    checkmarkElem.classList.add("checkmark");
+    labelElem.appendChild(checkmarkElem);
+
+    const textElem = document.createElement("span");
+    textElem.classList.add("provider-name");
+    textElem.textContent = model;
+
+    li.appendChild(labelElem);
+    li.appendChild(textElem);
+    list.appendChild(li);
+  });
+}
+
 function populateLanguageDropdown(): void {
   const select = document.getElementById("uiLanguage") as HTMLSelectElement | undefined;
   if (!select) return;
@@ -683,6 +770,13 @@ document.addEventListener("DOMContentLoaded", async () => {
   initLetterWaveSwitch();
   restoreOptions();
   restoreActiveTab();
+
+  new Sortable(document.getElementById("geminiModelFallbackList")!, {
+    animation: 150,
+    ghostClass: "dragging",
+    forceFallback: true,
+    onUpdate: saveOptions,
+  });
 });
 document.querySelectorAll("#options input, #options select").forEach(element => {
   element.addEventListener("change", saveOptions);
@@ -1322,14 +1416,73 @@ let activeExclusionTab: "romanization" | "translation" = "romanization";
 function updateExclusionsConfigVisibility(): void {
   const romanizationToggle = document.getElementById("isRomanizationEnabled") as HTMLInputElement;
   const translateToggle = document.getElementById("translate") as HTMLInputElement;
+  const translationProvider = document.getElementById("translationProvider") as HTMLSelectElement;
   const configContainer = document.getElementById("romanization-config-container");
-  if (!configContainer) return;
+  const providerContainer = document.getElementById("translationProviderContainer");
+  const geminiContainer = document.getElementById("geminiApiContainer");
 
-  const shouldShow = romanizationToggle?.checked || translateToggle?.checked;
-  configContainer.style.display = shouldShow ? "flex" : "none";
+  if (configContainer) {
+    configContainer.style.display = romanizationToggle?.checked || translateToggle?.checked ? "flex" : "none";
+  }
+  if (providerContainer) {
+    providerContainer.style.display = translateToggle?.checked ? "flex" : "none";
+  }
+  if (geminiContainer) {
+    geminiContainer.style.display =
+      translateToggle?.checked && translationProvider?.value === "gemini" ? "block" : "none";
+  }
 }
 
 function initLangExclusionsModal(): void {
+  const translationProvider = document.getElementById("translationProvider") as HTMLSelectElement;
+  translationProvider?.addEventListener("change", () => {
+    updateExclusionsConfigVisibility();
+    saveOptions();
+  });
+
+  const clearTranslationCacheBtn = document.getElementById("clear-translation-cache-btn");
+  clearTranslationCacheBtn?.addEventListener("click", () => {
+    chrome.tabs.query({ url: "https://music.youtube.com/*" }, tabs => {
+      tabs.forEach(tab => {
+        chrome.tabs.sendMessage(tab.id!, { action: "clearTranslationCache" });
+      });
+    });
+    const status = document.getElementById("status")!;
+    status.innerText = t("options_language_translationCacheCleared");
+    status.classList.add("active");
+    setTimeout(() => {
+      status.classList.remove("active");
+    }, 2000);
+  });
+
+  const geminiModelsBtn = document.getElementById("gemini-models-btn");
+  const geminiModalOverlay = document.getElementById("gemini-models-modal-overlay");
+  const geminiModalClose = document.getElementById("gemini-models-modal-close");
+  const geminiTranslationMode = document.getElementById("geminiTranslationMode") as HTMLSelectElement | null;
+  const resetFallbackBtn = document.getElementById("gemini-models-reset-btn");
+
+  geminiModelsBtn?.addEventListener("click", () => geminiModalOverlay?.classList.add("active"));
+  geminiModalClose?.addEventListener("click", () => geminiModalOverlay?.classList.remove("active"));
+  geminiModalOverlay?.addEventListener("click", e => {
+    if (e.target === geminiModalOverlay) geminiModalOverlay?.classList.remove("active");
+  });
+
+  geminiTranslationMode?.addEventListener("change", () => {
+    saveOptions();
+  });
+
+  if (resetFallbackBtn) {
+    resetFallbackBtn.textContent = t("options_resetToDefault", t("options_language_sequence"));
+    resetFallbackBtn.addEventListener("click", () => {
+      const defaultFallback = ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash"];
+      renderGeminiModelsList(defaultFallback);
+      if (geminiTranslationMode) {
+        geminiTranslationMode.value = "speed";
+      }
+      saveOptions();
+    });
+  }
+
   const romanizationToggle = document.getElementById("isRomanizationEnabled") as HTMLInputElement;
   const translateToggle = document.getElementById("translate") as HTMLInputElement;
   const configBtn = document.getElementById("romanization-config-btn");
