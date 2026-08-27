@@ -92,91 +92,91 @@
     "description": "Auto-scroll unsynced lyrics setting label"
   },
   "picture_in_picture_open": {
-    "message": "Open Picture-in-Picture lyrics",
+    "message": "開啟子母畫面歌詞",
     "description": "Accessible label for the dock action that opens the floating lyrics window"
   },
   "picture_in_picture_previous": {
-    "message": "Previous",
+    "message": "上一首",
     "description": "Accessible label for the previous track button in the Picture-in-Picture lyrics window, used when the YouTube Music player bar exposes no label of its own"
   },
   "picture_in_picture_play": {
-    "message": "Play",
+    "message": "播放",
     "description": "Accessible label for the play button in the Picture-in-Picture lyrics window, used when the YouTube Music player bar exposes no label of its own"
   },
   "picture_in_picture_pause": {
-    "message": "Pause",
+    "message": "暫停",
     "description": "Accessible label for the pause button in the Picture-in-Picture lyrics window, used when the YouTube Music player bar exposes no label of its own"
   },
   "picture_in_picture_next": {
-    "message": "Next",
+    "message": "下一首",
     "description": "Accessible label for the next track button in the Picture-in-Picture lyrics window, used when the YouTube Music player bar exposes no label of its own"
   },
   "options_display_pipEnabled": {
-    "message": "Enable floating window",
+    "message": "啟用浮動視窗",
     "description": "Master toggle for the floating lyrics window feature, which turns it off everywhere including the YouTube Music minimize button"
   },
   "options_display_pipAutoRestore": {
-    "message": "Reopen floating lyrics automatically",
+    "message": "自動重新開啟浮動歌詞",
     "description": "Setting label for automatically reopening the floating lyrics window after page load"
   },
   "options_display_pipAutoRestoreTooltip": {
-    "message": "Keeps the floating lyrics window from closing for good when you reload or move between songs and pages. Browsers only let a floating window open right after you interact with the page, so it reopens on your first click or key press instead of instantly.",
+    "message": "避免在重新載入或在歌曲與頁面之間切換時，浮動歌詞視窗永久關閉。瀏覽器只允許在您與頁面互動後立即開啟浮動視窗，因此它會在您的首次點擊或按鍵時重新開啟，而非立即開啟。",
     "description": "Help tooltip explaining what automatic floating-lyrics reopening does and why it waits for the first interaction"
   },
   "options_display_pipArtworkTransition": {
-    "message": "Album art transition",
+    "message": "專輯封面過渡效果",
     "description": "Setting label, shown inside the floating lyrics window settings, for choosing how album art changes between songs"
   },
   "options_pipTransition_shuffle": {
-    "message": "Shuffle",
+    "message": "隨機",
     "description": "Name of an album art transition where the artwork tilts back and the new cover is dealt in like a playing card"
   },
   "options_pipTransition_flip": {
-    "message": "Flip",
+    "message": "翻轉",
     "description": "Name of an album art transition where the artwork rotates like a card to reveal the new cover on its other side"
   },
   "options_pipTransition_push": {
-    "message": "Push",
+    "message": "推送",
     "description": "Name of a transition, offered for both album art and song titles, where the new content slides in from the side and pushes the old out"
   },
   "options_pipTransition_crossfade": {
-    "message": "Crossfade",
+    "message": "交叉淡入",
     "description": "Name of a transition, offered for both album art and song titles, where the new content fades in over the old"
   },
   "options_pipTransition_spring": {
-    "message": "Spring",
+    "message": "彈性跳動",
     "description": "Name of a song title transition where the words of the new title bounce up into place one after another"
   },
   "options_display_pipWindow": {
-    "message": "Floating lyrics window",
+    "message": "浮動歌詞視窗",
     "description": "Label for the row that opens the settings for the floating lyrics window"
   },
   "options_display_pipTextTransition": {
-    "message": "Title transition",
+    "message": "標題過渡效果",
     "description": "Setting label, shown inside the floating lyrics window settings, for choosing how the song title and artist change between songs"
   },
   "options_display_pipMarquee": {
-    "message": "Scroll long titles",
+    "message": "滾動顯示長標題",
     "description": "Toggle label for whether a song title too long for the floating lyrics window scrolls across so it can be read in full"
   },
   "options_display_shadersPromo": {
-    "message": "Show link to Better Lyrics Shaders",
+    "message": "顯示 Better Lyrics Shaders 連結",
     "description": "Toggle label for the Shaders companion link shown in the lyrics footer"
   },
   "options_display_unisonActions": {
-    "message": "Lyrics controls dock",
+    "message": "歌詞控制面板",
     "description": "Display-section row label for the lyrics controls dock modal trigger"
   },
   "options_unisonModal_title": {
-    "message": "Lyrics controls dock",
+    "message": "歌詞控制面板",
     "description": "Title of the lyrics controls dock settings modal"
   },
   "options_unisonModal_showPinned": {
-    "message": "Show controls dock",
+    "message": "顯示控制面板",
     "description": "Toggle label inside the lyrics controls dock modal for showing the floating dock"
   },
   "options_unisonModal_showPinned_hint": {
-    "message": "A floating dock to switch source, toggle translation and romanization, nudge sync, and vote on Unison lyrics",
+    "message": "用於切換來源、切換翻譯與羅馬拼音、微調同步，以及對 Unison 歌詞進行投票的浮動面板",
     "description": "Hint text under the Show controls dock toggle"
   },
   "options_unisonModal_autoHide": {
@@ -216,59 +216,59 @@
     "description": "Tooltip for the bottom-right cell in the Unison position picker"
   },
   "options_unisonModal_controlsShown": {
-    "message": "Controls shown",
+    "message": "顯示的控制項",
     "description": "Label above the toggles that pick which controls appear in the lyrics dock"
   },
   "options_unisonModal_controlSource": {
-    "message": "Source switcher",
+    "message": "來源切換器",
     "description": "Toggle label for showing the lyrics source switcher control in the dock"
   },
   "options_unisonModal_controlPictureInPicture": {
-    "message": "Floating window",
+    "message": "浮動視窗",
     "description": "Toggle label for showing the control that opens the floating lyrics window in the dock"
   },
   "options_unisonModal_controlOffset": {
-    "message": "Sync offset",
+    "message": "同步偏移",
     "description": "Toggle label for showing the sync offset control in the dock"
   },
   "lyricsDock_chooseSource": {
-    "message": "Choose lyrics source",
+    "message": "選擇歌詞來源",
     "description": "Accessible label for the lyrics dock button that opens the source provider dropdown"
   },
   "lyricsDock_previousSource": {
-    "message": "Previous source",
+    "message": "上一個來源",
     "description": "Accessible label for the lyrics dock button that switches to the previous lyrics provider"
   },
   "lyricsDock_nextSource": {
-    "message": "Next source",
+    "message": "下一個來源",
     "description": "Accessible label for the lyrics dock button that switches to the next lyrics provider"
   },
   "lyricsDock_offsetEarlier": {
-    "message": "Shift lyrics earlier",
+    "message": "將歌詞時間提早",
     "description": "Accessible label for the lyrics dock button that nudges sync timing earlier"
   },
   "lyricsDock_offsetLater": {
-    "message": "Shift lyrics later",
+    "message": "將歌詞時間延後",
     "description": "Accessible label for the lyrics dock button that nudges sync timing later"
   },
   "lyricsDock_offsetGlobal": {
-    "message": "Global",
+    "message": "全域",
     "description": "Label in the lyrics dock offset menu for the global offset applied to all songs and sync types"
   },
   "options_offsetModal_perSong": {
-    "message": "Per-song offsets",
+    "message": "單曲偏移量",
     "description": "Heading in the offset settings modal for the section that manages saved per-song sync offsets"
   },
   "options_offsetModal_perSongClear": {
-    "message": "Clear all",
+    "message": "清除全部",
     "description": "Button in the offset settings modal that deletes every saved per-song sync offset"
   },
   "options_offsetModal_perSongCount": {
-    "message": "Saved offsets",
+    "message": "已儲存的偏移量",
     "description": "Label in the offset settings modal showing how many per-song sync offsets are stored"
   },
   "options_offsetModal_appliesTo": {
-    "message": "Applies to",
+    "message": "套用於",
     "description": "Label in the offset settings modal preceding the list of sync types a given offset affects"
   },
   "options_language_displayLanguage": {
@@ -298,6 +298,62 @@
   "options_language_translationLanguage": {
     "message": "翻譯語言",
     "description": "Translation language setting label"
+  },
+  "options_language_translationProvider": {
+    "message": "翻譯服務",
+    "description": "Dropdown label to select which translation engine to use"
+  },
+  "options_language_googleTranslate": {
+    "message": "Google 翻譯",
+    "description": "Google Translate provider option"
+  },
+  "options_language_geminiApi": {
+    "message": "Gemini API",
+    "description": "Gemini API translation provider option"
+  },
+  "options_language_geminiApiSettings": {
+    "message": "Gemini API 設定",
+    "description": "Label for Gemini API settings button or collapsible container"
+  },
+  "options_language_geminiApiKeyPlaceholder": {
+    "message": "輸入您的 Gemini API 金鑰...",
+    "description": "Placeholder in the input field for Gemini API key"
+  },
+  "options_language_manageModelFallback": {
+    "message": "管理備用模型",
+    "description": "Label for the settings trigger/modal to manage fallback options for Gemini models"
+  },
+  "options_language_clearTranslationCache": {
+    "message": "清除翻譯快取",
+    "description": "Button label to clear cached Gemini/API translations"
+  },
+  "options_language_modelFallbackSequence": {
+    "message": "備用模型順序",
+    "description": "Title of the fallback sequence configuration popup or section"
+  },
+  "options_language_dragToReorder": {
+    "message": "拖曳以重新排序偏好的模型。系統會優先嘗試最上方的可用模型。",
+    "description": "Instruction label inside the model fallback modal"
+  },
+  "options_language_translationCacheCleared": {
+    "message": "翻譯快取已成功清除",
+    "description": "Success message when user clears local translation cache"
+  },
+  "options_language_sequence": {
+    "message": "順序",
+    "description": "Label prefix displaying the order of attempted models"
+  },
+  "options_language_translationMode": {
+    "message": "翻譯模式",
+    "description": "Setting label to choose between translation modes"
+  },
+  "options_language_translationModeSpeed": {
+    "message": "速度",
+    "description": "Speed mode translation option description"
+  },
+  "options_language_translationModeQuality": {
+    "message": "品質",
+    "description": "Quality mode translation option description"
   },
   "options_sources_title": {
     "message": "歌詞來源優先順序",
@@ -344,7 +400,7 @@
     "description": "Button to open the style editor if there are no styles"
   },
   "options_themes_edit": {
-    "message": "Edit",
+    "message": "編輯",
     "description": "Button to open the style editor"
   },
   "options_themes_marketplace": {
@@ -364,7 +420,7 @@
     "description": "Identity settings section description"
   },
   "options_identity_warning": {
-    "message": "Treat this like your password. Never share it. Export a backup. No one can recover a lost identity, not even admins.",
+    "message": "請將此視同您的密碼。切勿分享。匯出備份。身分一旦遺失便無法復原，即使是管理員也無能為力。",
     "description": "Security warning in the Identity settings tab: keep the identity private and back it up because it is unrecoverable"
   },
   "options_identity_yourIdentity": {
@@ -388,95 +444,95 @@
     "description": "Import key button label"
   },
   "options_identityImport_title": {
-    "message": "Import Identity",
+    "message": "匯入身分",
     "description": "Title of the import identity modal"
   },
   "options_identityImport_chooseFile": {
-    "message": "Choose File",
+    "message": "選擇檔案",
     "description": "Label for the file picker button in the import identity modal"
   },
   "options_identityImport_or": {
-    "message": "or",
+    "message": "或",
     "description": "Divider between file picker and paste textarea in the import identity modal"
   },
   "options_identityImport_pastePlaceholder": {
-    "message": "Paste identity JSON here...",
+    "message": "在此貼上身分 JSON...",
     "description": "Placeholder for the identity JSON textarea"
   },
   "options_identityImport_import": {
-    "message": "Import",
+    "message": "匯入",
     "description": "Confirm button label inside the import identity modal"
   },
   "options_nickname_description": {
-    "message": "Pick a name for yourself across Better Lyrics. Letters, numbers, and underscore, 3 to 20 characters.",
+    "message": "在 Better Lyrics 中為自己挑選一個名字。支援字母、數字與底線，長度為 3 到 20 個字元。",
     "description": "Nickname subsection description"
   },
   "options_nickname_placeholder": {
-    "message": "Pick a nickname",
+    "message": "選擇暱稱",
     "description": "Nickname input placeholder"
   },
   "options_nickname_save": {
-    "message": "Save",
+    "message": "儲存",
     "description": "Nickname save button label"
   },
   "options_nickname_reset": {
-    "message": "Reset to default",
+    "message": "重設為預設值",
     "description": "Nickname reset button label"
   },
   "options_nickname_modalTitle": {
-    "message": "Set your nickname",
+    "message": "設定您的暱稱",
     "description": "Nickname modal title"
   },
   "options_nickname_edit": {
-    "message": "Edit",
+    "message": "編輯",
     "description": "Nickname edit button label"
   },
   "options_nickname_editLabel": {
-    "message": "Edit nickname",
+    "message": "編輯暱稱",
     "description": "Accessible label for the nickname edit button"
   },
   "options_nickname_status_checking": {
-    "message": "Checking...",
+    "message": "檢查中...",
     "description": "Status while checking nickname availability"
   },
   "options_nickname_status_available": {
-    "message": "Available",
+    "message": "可用",
     "description": "Status when nickname is available"
   },
   "options_nickname_status_taken": {
-    "message": "Already taken",
+    "message": "已被使用",
     "description": "Status when nickname is already taken"
   },
   "options_nickname_status_invalid": {
-    "message": "3 to 20 letters, numbers, or underscores",
+    "message": "3 到 20 個英文字母、數字或底線",
     "description": "Status when nickname format is invalid"
   },
   "options_nickname_status_profane": {
-    "message": "Not allowed, try another",
+    "message": "不允許使用，請嘗試其他名稱",
     "description": "Status when nickname is flagged as inappropriate by the server"
   },
   "options_nickname_status_self": {
-    "message": "This is your current nickname",
+    "message": "這是您目前的暱稱",
     "description": "Status when entered nickname matches current"
   },
   "options_nickname_status_saved": {
-    "message": "Saved",
+    "message": "已儲存",
     "description": "Status when nickname is saved"
   },
   "options_nickname_status_submitting": {
-    "message": "Saving...",
+    "message": "儲存中...",
     "description": "Status while nickname save is in flight"
   },
   "options_nickname_status_rateLimited": {
-    "message": "Slow down, try again in a moment",
+    "message": "請放慢速度，稍後再試",
     "description": "Status when nickname checks are rate limited"
   },
   "options_nickname_status_error": {
-    "message": "Could not reach the server",
+    "message": "無法連線至伺服器",
     "description": "Status when nickname request fails"
   },
   "options_alert_importEmpty": {
-    "message": "Paste identity JSON or choose a file first.",
+    "message": "請先貼上身分 JSON 或選擇檔案。",
     "description": "Shown when the user clicks Import with no JSON provided"
   },
   "options_modal_selectTheme": {
@@ -604,7 +660,7 @@
     "description": "YouTube provider name"
   },
   "options_provider_youtubeCaptions": {
-    "message": "YouTube Captions",
+    "message": "YouTube 字幕",
     "description": "YouTube Captions provider name"
   },
   "options_provider_binilyrics": {
@@ -960,7 +1016,7 @@
     "description": "Empty installed themes message"
   },
   "marketplace_lastUpdatedOn": {
-    "message": "最後更新於 {date}  ",
+    "message": "最後更新於 $date$",
     "description": "Tooltip showing full date when a theme was last updated",
     "placeholders": {
       "date": {
@@ -970,7 +1026,7 @@
     }
   },
   "marketplace_requiresVersion": {
-    "message": "Requires v$version$+",
+    "message": "需要 v$version$ 以上版本",
     "description": "Footer chip in the theme detail modal showing the minimum Better Lyrics version a theme needs",
     "placeholders": {
       "version": {
@@ -980,11 +1036,11 @@
     }
   },
   "marketplace_discussion": {
-    "message": "Discussion",
+    "message": "討論區",
     "description": "Footer link in the theme detail modal that opens the theme's discussion thread"
   },
   "marketplace_commit": {
-    "message": "Commit $hash$",
+    "message": "提交 $hash$",
     "description": "Footer chip in the theme detail modal linking to the exact source commit a theme was built from",
     "placeholders": {
       "hash": {
@@ -1033,12 +1089,20 @@
     "message": "來源：",
     "description": "Lyrics source label"
   },
+  "lyrics_translationSource": {
+    "message": "翻譯：",
+    "description": "Label for translation source in footer (e.g. Translation: )"
+  },
+  "lyrics_translationErrorGemini": {
+    "message": "Gemini API 翻譯錯誤，請稍後再試",
+    "description": "Error message shown in the translation source capsule when all Gemini models fail"
+  },
   "lyrics_searchOnGenius": {
     "message": "在 Genius 上搜尋",
     "description": "Search on Genius button text"
   },
   "lyrics_getShaders": {
-    "message": "Get Better Lyrics Shaders",
+    "message": "獲取 Better Lyrics Shaders",
     "description": "Footer button text linking to the Better Lyrics Shaders companion extension"
   },
   "lyrics_searching": {
@@ -1062,7 +1126,7 @@
     "description": "Message when no lyrics are available"
   },
   "lyrics_resumeAutoscroll": {
-    "message": "Resume Autoscroll",
+    "message": "恢復自動滾動",
     "description": "Resume Autoscroll button label"
   },
   "options_language_exclusions": {
@@ -1090,11 +1154,11 @@
     "description": "Search input placeholder"
   },
   "options_romanization_hint": {
-    "message": "Click to toggle. Excluded languages will not be romanized.",
+    "message": "點擊以切換。排除的語言將不會進行羅馬拼音。",
     "description": "Hint text for romanization exclusions"
   },
   "options_translation_hint": {
-    "message": "Click to toggle. Excluded source languages will not be translated.",
+    "message": "點擊以切換。排除的來源語言將不會進行翻譯。",
     "description": "Hint text for translation exclusions"
   },
   "options_resetToDefault": {
@@ -1160,7 +1224,7 @@
     }
   },
   "theme_author_prefix": {
-    "message": "by $AUTHOR$",
+    "message": "由 $AUTHOR$ 製作",
     "description": "Author prefix shown on theme selector button",
     "placeholders": {
       "author": {
@@ -1170,7 +1234,7 @@
     }
   },
   "theme_author_you": {
-    "message": "by You",
+    "message": "由您製作",
     "description": "Author label for custom user themes on theme selector button"
   },
   "symlink_installFailed": {
@@ -1186,35 +1250,35 @@
     "description": "Badge text on non-symlinked built-in theme cards"
   },
   "deprecation_builtin_title": {
-    "message": "Heads up, these themes are moving!",
+    "message": "請注意，這些主題即將移位！",
     "description": "Title for the built-in themes deprecation banner in theme modal"
   },
   "deprecation_builtin_body": {
-    "message": "We're migrating built-in themes to the Theme Marketplace. Some already have, look for the Marketplace badge. The rest will follow in a future update, with CSS backups on GitHub and Discord.",
+    "message": "我們正將內建主題遷移到主題市場。部分主題已經完成遷移，請尋找市場徽章。其餘主題將在未來的更新中跟進，並在 GitHub 和 Discord 上提供 CSS 備份。",
     "description": "Body text for the built-in themes deprecation banner"
   },
   "deprecation_builtin_cta": {
-    "message": "Browse Marketplace",
+    "message": "瀏覽市場",
     "description": "CTA button text in the deprecation banner to open the marketplace"
   },
   "theme_modal_section_builtin": {
-    "message": "Built-in Themes",
+    "message": "內建主題",
     "description": "Section title for built-in themes in the theme chooser modal"
   },
   "theme_modal_section_custom": {
-    "message": "Custom Themes",
+    "message": "自訂主題",
     "description": "Section title for custom themes in the theme chooser modal"
   },
   "lyrics_submitToUnison": {
-    "message": "Submit lyrics with Unison",
+    "message": "使用 Unison 提交歌詞",
     "description": "Button text for submitting lyrics to Unison"
   },
   "auth_pageTitle": {
-    "message": "Sign in with Better Lyrics",
+    "message": "使用 Better Lyrics 登入",
     "description": "Browser tab title for the auth consent popup"
   },
   "auth_consentHeading": {
-    "message": "Sign in to $ORIGIN$",
+    "message": "登入到 $ORIGIN$",
     "description": "Consent prompt heading. $ORIGIN$ is replaced with the requesting site, e.g. unison.boidu.dev",
     "placeholders": {
       "origin": {
@@ -1224,7 +1288,7 @@
     }
   },
   "auth_consentSubheading": {
-    "message": "You will sign in as $NAME$.",
+    "message": "您將以 $NAME$ 身份登入。",
     "description": "Identifies the current BL identity. $NAME$ is the deterministic display name.",
     "placeholders": {
       "name": {
@@ -1234,43 +1298,43 @@
     }
   },
   "auth_consentExplainer": {
-    "message": "Better Lyrics will sign a one-time message proving you control this identity. The site never sees your private key.",
+    "message": "Better Lyrics 將簽署一次性訊息以證明您控制此身份。該網站絕不會看到您的私鑰。",
     "description": "Short explainer body in the consent popup"
   },
   "auth_rememberLabel": {
-    "message": "Don't ask again for 24 hours",
+    "message": "24 小時內不再詢問",
     "description": "Checkbox label allowing the user to remember this approval"
   },
   "auth_approve": {
-    "message": "Approve",
+    "message": "批准",
     "description": "Primary button: approve the sign-in request"
   },
   "auth_cancel": {
-    "message": "Cancel",
+    "message": "取消",
     "description": "Secondary button: reject the sign-in request"
   },
   "auth_invalidRequest": {
-    "message": "Invalid sign-in request.",
+    "message": "無效的登入請求。",
     "description": "Error state shown when the popup receives malformed parameters"
   },
   "auth_sessionExpired": {
-    "message": "Sign-in expired. Please close this window and try again.",
+    "message": "登入已逾期。請關閉此視窗並重試。",
     "description": "Shown in the sign-in consent popup when the connection to the extension's service worker is lost before the user can approve or cancel."
   },
   "lyrics_requestSyncedVersion": {
-    "message": "Request a synced version",
+    "message": "請求同步版本",
     "description": "Button label asking the community to contribute synced lyrics for the current song"
   },
   "lyrics_requestedFirst": {
-    "message": "Requested · you're the first",
+    "message": "已請求 · 您是第一個",
     "description": "Button label after a successful first-ever request for this song"
   },
   "lyrics_requestedOneOther": {
-    "message": "Requested · 1 other wants this",
+    "message": "已請求 · 還有 1 人想要此歌詞",
     "description": "Button label after a successful request when exactly one other person has also requested"
   },
   "lyrics_requestedNOthers": {
-    "message": "Requested · $N$ others want this",
+    "message": "已請求 · 還有 $N$ 人想要此歌詞",
     "description": "Button label after a successful request when N other people have also requested",
     "placeholders": {
       "n": {
@@ -1280,23 +1344,23 @@
     }
   },
   "lyrics_requestErrorRateLimit": {
-    "message": "Try again in a minute",
+    "message": "請在一分鐘後重試",
     "description": "Button label shown briefly when the request is rate-limited"
   },
   "lyrics_requestErrorNetwork": {
-    "message": "Couldn't reach Unison",
+    "message": "無法連線至 Unison",
     "description": "Button label shown briefly when the request fails for a transport/network reason (no HTTP response received)"
   },
   "lyrics_requestErrorServer": {
-    "message": "Unison is having trouble",
+    "message": "Unison 發生問題",
     "description": "Button label shown briefly when the request fails with a 5xx server error"
   },
   "lyrics_requestErrorGeneric": {
-    "message": "Couldn't send the request",
+    "message": "無法傳送請求",
     "description": "Button label shown briefly when the request fails for any other reason (catch-all)"
   },
   "lyrics_requestSyncedLanded": {
-    "message": "Synced version available. Refresh.",
+    "message": "同步版本已可用。請重新整理。",
     "description": "Button label when the server reports a synced version already exists; clicking reloads the page"
   },
   "unison_pageTitle": {
@@ -1308,51 +1372,51 @@
     "description": "Unison branding title"
   },
   "unison_subtitle": {
-    "message": "Community Lyrics",
+    "message": "社群歌詞",
     "description": "Unison subtitle text"
   },
   "unison_search": {
-    "message": "Search lyrics",
+    "message": "搜尋歌詞",
     "description": "Search button label"
   },
   "unison_searchPlaceholder": {
-    "message": "Search songs, artists, or lyrics...",
+    "message": "搜尋歌曲、藝人或歌詞...",
     "description": "Search input placeholder"
   },
   "unison_submit": {
-    "message": "Submit Lyrics",
+    "message": "提交歌詞",
     "description": "Submit lyrics button text"
   },
   "unison_submitSuccess": {
-    "message": "Lyrics submitted!",
+    "message": "歌詞已提交！",
     "description": "Success message after submitting lyrics"
   },
   "unison_submitDescription": {
-    "message": "Submit community lyrics for any YouTube Music track. Paste LRC (timestamped), TTML (XML), or plain text. Synced formats are prioritized.",
+    "message": "為任何 YouTube Music 歌曲提交社群歌詞。可貼上 LRC (帶時間戳記)、TTML (XML) 或純文字。同步格式將被優先採用。",
     "description": "Description text for the submission form"
   },
   "unison_composerHintPrefix": {
-    "message": "Use",
+    "message": "使用",
     "description": "Text before Composer link in submit hint"
   },
   "unison_composerHintSuffix": {
-    "message": "to create word-synced lyrics from scratch.",
+    "message": "從頭開始建立單字級同步歌詞。",
     "description": "Text after Composer link in submit hint"
   },
   "unison_upvote": {
-    "message": "Upvote",
+    "message": "贊成",
     "description": "Upvote button tooltip"
   },
   "unison_downvote": {
-    "message": "Downvote",
+    "message": "反對",
     "description": "Downvote button tooltip"
   },
   "unison_report": {
-    "message": "Report",
+    "message": "檢舉",
     "description": "Report button tooltip"
   },
   "unison_reportSuccess": {
-    "message": "Reported",
+    "message": "已檢舉",
     "description": "Report success tooltip text"
   },
   "unison_delete": {
@@ -1376,19 +1440,19 @@
     "description": "Generic error message shown on the delete button when the request fails for any other reason"
   },
   "unison_report_wrong_song": {
-    "message": "Wrong song",
+    "message": "歌曲錯誤",
     "description": "Report reason: wrong song"
   },
   "unison_report_bad_sync": {
-    "message": "Bad sync",
+    "message": "同步不良",
     "description": "Report reason: bad synchronization"
   },
   "unison_report_offensive": {
-    "message": "Offensive",
+    "message": "冒犯性內容",
     "description": "Report reason: offensive content"
   },
   "unison_report_spam": {
-    "message": "Spam",
+    "message": "垃圾內容",
     "description": "Report reason: spam"
   },
   "unison_report_other": {
@@ -1396,31 +1460,31 @@
     "description": "Report reason: other"
   },
   "unison_confidence_low": {
-    "message": "Unverified",
+    "message": "未驗證",
     "description": "Tier label for entries with fewer than the minimum votes for confidence"
   },
   "unison_confidence_medium": {
-    "message": "Trusted",
+    "message": "受信任",
     "description": "Tier label for entries the community has accepted (the baseline 'good enough' tier)"
   },
   "unison_confidence_high": {
-    "message": "Top-Rated",
+    "message": "最高評分",
     "description": "Tier label for entries with diverse community approval (rare, top tier)"
   },
   "unison_sortTopRated": {
-    "message": "Top-Rated",
+    "message": "最高評分",
     "description": "Sort by effective score, highest first"
   },
   "unison_sortBottomRated": {
-    "message": "Bottom-Rated",
+    "message": "最低評分",
     "description": "Sort by effective score, lowest first"
   },
   "unison_sortMostVoted": {
-    "message": "Most-Voted",
+    "message": "最多投票",
     "description": "Sort by vote count, most first"
   },
   "unison_sortLeastVoted": {
-    "message": "Least-Voted",
+    "message": "最少投票",
     "description": "Sort by vote count, fewest first"
   },
   "unison_syncRichsync": {
@@ -1432,19 +1496,19 @@
     "description": "Sync type: line-level timing. Reused by the sync badge on cards and the sync filter chip"
   },
   "unison_syncPlain": {
-    "message": "Plain",
+    "message": "純文字",
     "description": "Sync type: unsynced lyrics. Reused by the sync badge on cards and the sync filter chip"
   },
   "unison_tier": {
-    "message": "Tier",
+    "message": "層級",
     "description": "Filter bar group label for confidence tier"
   },
   "unison_tierTrustedPlus": {
-    "message": "Trusted+",
+    "message": "受信任以上",
     "description": "Tier filter chip hiding Unverified entries (shows Trusted and above)"
   },
   "unison_languageAll": {
-    "message": "All languages",
+    "message": "所有語言",
     "description": "Language dropdown default option"
   },
   "unison_format_lrc": {
@@ -1456,23 +1520,23 @@
     "description": "TTML format badge"
   },
   "unison_format_plain": {
-    "message": "Plain",
+    "message": "純文字",
     "description": "Plain text format badge"
   },
   "unison_autoDetect": {
-    "message": "Auto-detect",
+    "message": "自動偵測",
     "description": "Auto-detect format option"
   },
   "unison_noResults": {
-    "message": "No lyrics found. Try a different search.",
+    "message": "找不到歌詞。請嘗試其他搜尋。",
     "description": "No search results message"
   },
   "unison_interactingAs": {
-    "message": "Interacting as",
+    "message": "目前身分：",
     "description": "Identity label prefix"
   },
   "unison_loadMore": {
-    "message": "Loading more...",
+    "message": "載入中...",
     "description": "Auto-loading indicator shown at the bottom of the feed while the next page is being fetched"
   },
   "unison_votes": {
@@ -1500,7 +1564,7 @@
     "description": "Duration field label"
   },
   "unison_videoId": {
-    "message": "Video ID",
+    "message": "影片 ID",
     "description": "Video ID field label"
   },
   "unison_lyrics": {
@@ -1536,71 +1600,71 @@
     "description": "ISRC field label"
   },
   "unison_placeholder_song": {
-    "message": "e.g. Bohemian Rhapsody",
+    "message": "例如 Bohemian Rhapsody",
     "description": "Placeholder for song input"
   },
   "unison_placeholder_artist": {
-    "message": "e.g. Queen",
+    "message": "例如 Queen",
     "description": "Placeholder for artist input"
   },
   "unison_placeholder_album": {
-    "message": "e.g. A Night at the Opera",
+    "message": "例如 A Night at the Opera",
     "description": "Placeholder for album input"
   },
   "unison_placeholder_duration": {
-    "message": "e.g. 354",
+    "message": "例如 354",
     "description": "Placeholder for duration input"
   },
   "unison_placeholder_videoId": {
-    "message": "e.g. dQw4w9WgXcQ",
+    "message": "例如 dQw4w9WgXcQ",
     "description": "Placeholder for video ID input"
   },
   "unison_placeholder_isrc": {
-    "message": "e.g. GBAYE0601498",
+    "message": "例如 GBAYE0601498",
     "description": "Placeholder for ISRC input"
   },
   "unison_placeholder_lyrics": {
-    "message": "Paste LRC, TTML, or plain text lyrics here. You can also drag & drop a file.",
+    "message": "在此貼上 LRC、TTML 或純文字歌詞。您也可以拖放檔案至此。",
     "description": "Placeholder for lyrics textarea"
   },
   "unison_durationHint": {
-    "message": "Song length in seconds",
+    "message": "歌曲長度 (秒)",
     "description": "Hint text below duration field label"
   },
   "unison_videoIdHint": {
-    "message": "11-character ID from the YouTube Music URL",
+    "message": "YouTube Music 網址中的 11 字元 ID",
     "description": "Hint text below video ID field label"
   },
   "unison_formatHint": {
-    "message": "Auto-detected from lyrics content",
+    "message": "從歌詞內容自動偵測",
     "description": "Hint text below format field label"
   },
   "unison_isrcHintPrefix": {
-    "message": "Find it using an",
+    "message": "使用",
     "description": "Text before ISRC finder link"
   },
   "unison_isrcHintLinkText": {
-    "message": "ISRC lookup tool",
+    "message": "ISRC 查詢工具",
     "description": "Link text for ISRC finder"
   },
   "unison_tabFeed": {
-    "message": "Feed",
+    "message": "動態",
     "description": "Feed tab label for recent submissions"
   },
   "unison_tabMySubmissions": {
-    "message": "My Submissions",
+    "message": "我的提交",
     "description": "Feed tab label for user's own submissions"
   },
   "unison_noSubmissions": {
-    "message": "You haven't submitted any lyrics yet.",
+    "message": "您尚未提交 any 歌詞。",
     "description": "Empty state for my submissions tab"
   },
   "unison_noFilterResults": {
-    "message": "No lyrics match your filters",
+    "message": "沒有符合篩選條件的歌詞",
     "description": "Empty state shown when the active sort/filter combination returns no entries"
   },
   "unison_noFeedYet": {
-    "message": "No lyrics here yet",
+    "message": "這裡還沒有歌詞",
     "description": "Empty state shown when the recent feed is empty with no filters applied"
   },
   "unison_sync": {
@@ -1612,19 +1676,19 @@
     "description": "Language label in detail view"
   },
   "unison_uploadedBy": {
-    "message": "Uploaded by",
+    "message": "上傳者",
     "description": "Metadata row label in the Unison detail sidebar, before the uploader's name which links to their curator page"
   },
   "unison_languageUnspecified": {
-    "message": "Not specified",
+    "message": "未指定",
     "description": "Default option in the submission form's language dropdown, used when the submitter has not chosen a language"
   },
   "unison_fulfilledBadge": {
-    "message": "Requested & fulfilled",
+    "message": "已請求且已完成",
     "description": "Badge on the Unison detail page shown when this lyric answered a community request"
   },
   "unison_fulfilledNote": {
-    "message": "Someone wanted this on Better Lyrics, and $name$ came through with it.",
+    "message": "有人在 Better Lyrics 上請求了這首歌，而 $name$ 完成了它。",
     "description": "Sentence on the Unison detail page explaining that the lyric fulfilled a community request. $name$ is the uploader's display name",
     "placeholders": {
       "name": {
@@ -1634,15 +1698,15 @@
     }
   },
   "unison_fulfilledBoardLink": {
-    "message": "See the requests board",
+    "message": "查看請求板",
     "description": "Link on the Unison detail page that opens the community requests board (queue of most-wanted songs)"
   },
   "unison_validationRequired": {
-    "message": "Please fill in song, artist, video ID, and lyrics.",
+    "message": "請填寫歌曲、藝人、影片 ID 和歌詞。",
     "description": "Validation error when required fields are missing"
   },
   "unison_submitFailed": {
-    "message": "Submission failed",
+    "message": "提交失敗",
     "description": "Fallback error message when submission fails"
   },
   "report_lyrics_title": {
@@ -1650,7 +1714,7 @@
     "description": "Title for the report lyrics modal"
   },
   "report_lyrics_info": {
-    "message": "Specify the reason why the lyrics for this song are not compatible",
+    "message": "請指定此歌曲歌詞不相容的原因",
     "description": "Information about using the report lyrics modal"
   },
   "report_lyrics_wrong_song": {
@@ -1658,27 +1722,27 @@
     "description": "Reason for the report that the lyrics are for the wrong song or version"
   },
   "report_lyrics_bad_sync": {
-    "message": "Bad synchronization",
+    "message": "同步不良",
     "description": "Reason for the report that the lyrics are too off on the part synchronization"
   },
   "report_lyrics_offensive": {
-    "message": "Offensive",
+    "message": "冒犯性內容",
     "description": "Reason for the report that the lyrics are offensive or too offensive"
   },
   "report_lyrics_spam": {
-    "message": "Spam or lyrics are irrelevant to the song",
+    "message": "垃圾訊息或歌詞與歌曲無關",
     "description": "Reason for the report that the lyrics are a spam attempt and/or irrelevant with the sung parts"
   },
   "report_lyrics_other": {
-    "message": "Other reason",
+    "message": "其他原因",
     "description": "Reason for the report that the lyrics is bad in other reasons"
   },
   "report_lyrics_details_placeholder": {
-    "message": "Additional details about this report",
+    "message": "此檢舉的額外詳細資訊",
     "description": "Placeholder for report lyrics details input"
   },
   "report_lyrics_submit": {
-    "message": "Submit",
+    "message": "提交",
     "description": "Submit button for reporting lyrics"
   },
   "report_lyrics_cancel": {
@@ -1686,19 +1750,19 @@
     "description": "Cancel button for reporting lyrics"
   },
   "report_lyrics_reporting": {
-    "message": "Reporting lyrics...",
+    "message": "正在檢舉歌詞...",
     "description": "Report lyrics on a reporting process"
   },
   "report_lyrics_success": {
-    "message": "",
+    "message": "感謝您的回報！我們會盡快查看。",
     "description": "Shown after a lyrics report is successfully submitted"
   },
   "report_lyrics_already": {
-    "message": "We've got this one already. Thanks though!",
+    "message": "我們已經收到這個檢舉了。依然感謝您！",
     "description": "Shown when the user tries to report the same lyrics twice"
   },
   "report_lyrics_error": {
-    "message": "That didn't go through. Mind trying again?",
+    "message": "傳送失敗，您介意再試一次嗎？",
     "description": "Shown when a lyrics report fails to submit"
   },
   "unison_tier_new": {
@@ -1706,31 +1770,31 @@
     "description": "Trust tier badge for low-reputation Unison submitters"
   },
   "unison_tier_trusted": {
-    "message": "trusted",
+    "message": "受信任",
     "description": "Trust tier badge for mid-reputation Unison submitters"
   },
   "unison_tier_veteran": {
-    "message": "veteran",
+    "message": "資深",
     "description": "Trust tier badge for high-reputation Unison submitters"
   },
   "unison_tier_expert": {
-    "message": "expert",
+    "message": "專家",
     "description": "Trust tier badge for top-reputation Unison submitters"
   },
   "unison_submitted_this": {
-    "message": "submitted this lyric",
+    "message": "提交了此歌詞",
     "description": "Sub-label under the submitter name in the Unison footer card"
   },
   "unison_score_label": {
-    "message": "score",
+    "message": "分數",
     "description": "Noun shown after the numeric score in the Unison footer (e.g. the 'score' in '4.85 score · 12 votes')"
   },
   "unison_vote_singular": {
-    "message": "vote",
+    "message": "票",
     "description": "Singular noun used after the number 1 in the Unison vote count (e.g. '1 vote')"
   },
   "unison_vote_plural": {
-    "message": "votes",
+    "message": "票",
     "description": "Plural noun used after numbers other than 1 in the Unison vote count (e.g. '5 votes')"
   }
 }
