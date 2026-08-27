@@ -28,7 +28,7 @@ import { awaitUnifiedStream } from "./providers/unified";
 import type { YTLyricSourceResult } from "./providers/yt";
 import { getSongAlbum, getSongMetadata, type SegmentMap } from "./requestSniffer/requestSniffer";
 import { getSegmentMapTimeShiftMs } from "@modules/lyrics/segmentMap";
-import { clearCache as clearTranslationCache } from "./translation";
+import { clearMemoryTranslationCache } from "./translation";
 import { mainView } from "@modules/ui/mainLyricsView";
 import { resetPlaybackClock, resumeAllAutoscroll } from "@braccato/core";
 import { registerThemeSetting } from "@braccato/core/themeSettings";
@@ -242,7 +242,7 @@ export async function createLyrics(detail: PlayerDetails, signal: AbortSignal): 
       logCore("Not Switching between audio/video", isAVSwitch, segmentMap);
       renderLoader();
       shouldCleanupLoader = true;
-      clearTranslationCache();
+      clearMemoryTranslationCache();
       matchingSong = await getSongMetadata(videoId, 250, signal);
       segmentMap = matchingSong?.segmentMap || null;
       AppState.areLyricsLoaded = false;

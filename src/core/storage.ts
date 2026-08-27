@@ -402,7 +402,7 @@ export async function purgeExpiredKeys(): Promise<void> {
     const keysToRemove: string[] = [];
 
     Object.keys(result).forEach(key => {
-      if (key.startsWith("blyrics_")) {
+      if (key.startsWith("blyrics_") || key.startsWith("gemini_")) {
         const item = result[key] as TransientStorageItem;
         if (isExpired(item.expiry, now)) {
           keysToRemove.push(key);

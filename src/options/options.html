@@ -215,6 +215,22 @@
 								<span class="ui-row__label" id="translate-label">__MSG_options_language_translate__</span>
 								<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="translate" aria-labelledby="translate-label"><span class="ui-switch__track" aria-hidden="true"></span></label>
 							</div>
+							<div class="ui-row" id="translationProviderContainer" style="display: none;">
+								<span class="ui-row__label">__MSG_options_language_translationProvider__</span>
+								<div data-dropdown="translationProvider"></div>
+							</div>
+							<div class="ui-panel" id="geminiApiContainer" style="display: none; padding: 0.5rem 0.75rem;">
+								<p style="margin-bottom: 0.5rem; font-size: 0.85rem; opacity: 0.8;">__MSG_options_language_geminiApiSettings__</p>
+								<input type="password" id="geminiApiKey" placeholder="__MSG_options_language_geminiApiKeyPlaceholder__" style="margin-bottom: 0.5rem; width: 100%; box-sizing: border-box; background: var(--bg-1); border: 1px solid var(--border); color: var(--fg); padding: 0.4rem; border-radius: 4px;">
+								<div class="btn-row" style="display: flex; gap: 0.5rem;">
+									<button class="ui-button ui-button--compact" id="gemini-models-btn" type="button">
+										__MSG_options_language_manageModelFallback__
+									</button>
+									<button class="ui-button ui-button--compact btn-danger" id="clear-translation-cache-btn" type="button">
+										__MSG_options_language_clearTranslationCache__
+									</button>
+								</div>
+							</div>
 							<div class="ui-row">
 								<span class="ui-row__label">__MSG_options_language_translationLanguage__</span>
 								<div data-dropdown="translationLanguage"></div>
@@ -489,6 +505,30 @@
 
 				<div class="ui-modal__foot">
 					<button id="lang-exclusions-reset-btn" type="button" class="ui-button ui-button--header">__MSG_options_resetToDefault__</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="gemini-models-modal-overlay" class="ui-modal" hidden="">
+			<div class="ui-modal__surface">
+				<div class="ui-modal__head">
+					<h3 class="ui-modal__title">__MSG_options_language_modelFallbackSequence__</h3>
+					<button id="gemini-models-modal-close" type="button" class="ui-button ui-button--header ui-button--icon ui-modal__close" data-modal-close="" aria-label="__MSG_ui_close__">
+						<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+							<path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"></path>
+						</svg>
+					</button>
+				</div>
+				<div class="ui-modal__body" data-scroll-fade="">
+					<p class="ui-modal__message" style="margin-bottom:1rem; opacity:0.8; font-size:0.9rem;">__MSG_options_language_dragToReorder__</p>
+					<ul id="geminiModelFallbackList" class="sortable-list" style="padding:0; margin:0; list-style:none;"></ul>
+					<div class="ui-row" style="margin-top:1.5rem;">
+						<span class="ui-row__label">__MSG_options_language_translationMode__</span>
+						<div data-dropdown="geminiTranslationMode"></div>
+					</div>
+				</div>
+				<div class="ui-modal__foot">
+					<button id="gemini-models-reset-btn" type="button" class="ui-button"></button>
 				</div>
 			</div>
 		</div>
