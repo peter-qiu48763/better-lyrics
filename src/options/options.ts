@@ -83,6 +83,10 @@ interface Options extends VideoQualitySettings {
   pipProgressBarEnabled: boolean;
   isKaraokeEnabled: boolean;
   isTranslateEnabled: boolean;
+  translationProvider: "google" | "gemini";
+  geminiApiKey: string;
+  geminiModelFallback: string[];
+  geminiTranslationMode?: "speed" | "quality";
   translationLanguage: string;
   isCursorAutoHideEnabled: boolean;
   isRomanizationEnabled: boolean;
@@ -156,6 +160,17 @@ const getOptionsFromForm = (): Options => {
     pipProgressBarEnabled: (document.getElementById("pipProgressBarEnabled") as HTMLInputElement).checked,
     isKaraokeEnabled: (document.getElementById("isKaraokeEnabled") as HTMLInputElement).checked,
     isTranslateEnabled: (document.getElementById("translate") as HTMLInputElement).checked,
+    translationProvider: ((document.getElementById("translationProvider") as HTMLInputElement | null)?.value ||
+      "google") as "google" | "gemini",
+    geminiApiKey: (document.getElementById("geminiApiKey") as HTMLInputElement).value,
+    geminiModelFallback: Array.from(document.getElementById("geminiModelFallbackList")!.children)
+      .filter(c => {
+        const checkbox = c.querySelector("input[type='checkbox']") as HTMLInputElement | null;
+        return checkbox ? checkbox.checked : true;
+      })
+      .map(c => c.getAttribute("data-model")!),
+    geminiTranslationMode: ((document.getElementById("geminiTranslationMode") as HTMLInputElement | null)?.value ||
+      "speed") as "speed" | "quality",
     translationLanguage: (document.getElementById("translationLanguage") as HTMLInputElement).value,
     isCursorAutoHideEnabled: (document.getElementById("cursorAutoHide") as HTMLInputElement).checked,
     isRomanizationEnabled: (document.getElementById("isRomanizationEnabled") as HTMLInputElement).checked,
@@ -209,13 +224,16 @@ function setDockControlsOrderInForm(order: string[]): void {
 
 // Function to save options to Chrome storage
 const saveOptionsToStorage = (options: Options): void => {
-  chrome.storage.sync.set(options, () => {
-    if (!chrome.runtime.lastError) flashSaved();
-    chrome.tabs.query({ url: "https://music.youtube.com/*" }, tabs => {
-      tabs.forEach(tab => {
-        chrome.tabs.sendMessage(tab.id!, {
-          action: "updateSettings",
-          settings: options,
+  const { geminiApiKey, ...syncOptions } = options;
+  chrome.storage.local.set({ geminiApiKey }, () => {
+    chrome.storage.sync.set(syncOptions, () => {
+      if (!chrome.runtime.lastError) flashSaved();
+      chrome.tabs.query({ url: "https://music.youtube.com/*" }, tabs => {
+        tabs.forEach(tab => {
+          chrome.tabs.sendMessage(tab.id!, {
+            action: "updateSettings",
+            settings: options,
+          });
         });
       });
     });
@@ -316,6 +334,10 @@ const restoreOptions = (): void => {
     pipProgressBarEnabled: true,
     ...KARAOKE_DEFAULTS,
     isTranslateEnabled: false,
+    translationProvider: "google",
+    geminiApiKey: "",
+    geminiModelFallback: ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash"],
+    geminiTranslationMode: "speed",
     translationLanguage: "en",
     isRomanizationEnabled: false,
     preferredProviderList: [
@@ -362,19 +384,24 @@ const restoreOptions = (): void => {
     "isUnisonAutoHideInFullscreenEnabled",
   ];
 
-  chrome.storage.sync.get(readKeys, (raw: { [key: string]: any }) => {
-    setOptionsInForm({
-      ...defaultOptions,
-      ...(raw as Options),
-      letterWavePref: migrateLetterWavePref(raw),
-      isControlsDockEnabled:
-        raw.isControlsDockEnabled ?? raw.isUnisonPinnedDockEnabled ?? defaultOptions.isControlsDockEnabled,
-      controlsDockPosition:
-        raw.controlsDockPosition ?? raw.unisonPinnedDockPosition ?? defaultOptions.controlsDockPosition,
-      isControlsDockAutoHideInFullscreenEnabled:
-        raw.isControlsDockAutoHideInFullscreenEnabled ??
-        raw.isUnisonAutoHideInFullscreenEnabled ??
-        defaultOptions.isControlsDockAutoHideInFullscreenEnabled,
+  const syncKeys = readKeys.filter(k => k !== "geminiApiKey");
+  chrome.storage.local.get("geminiApiKey", localRaw => {
+    const geminiApiKey = (localRaw as any).geminiApiKey ?? defaultOptions.geminiApiKey;
+    chrome.storage.sync.get(syncKeys, (raw: { [key: string]: any }) => {
+      setOptionsInForm({
+        ...defaultOptions,
+        ...(raw as Options),
+        letterWavePref: migrateLetterWavePref(raw),
+        geminiApiKey,
+        isControlsDockEnabled:
+          raw.isControlsDockEnabled ?? raw.isUnisonPinnedDockEnabled ?? defaultOptions.isControlsDockEnabled,
+        controlsDockPosition:
+          raw.controlsDockPosition ?? raw.unisonPinnedDockPosition ?? defaultOptions.controlsDockPosition,
+        isControlsDockAutoHideInFullscreenEnabled:
+          raw.isControlsDockAutoHideInFullscreenEnabled ??
+          raw.isUnisonAutoHideInFullscreenEnabled ??
+          defaultOptions.isControlsDockAutoHideInFullscreenEnabled,
+      });
     });
   });
 
@@ -414,6 +441,12 @@ const setOptionsInForm = (items: Options): void => {
   (document.getElementById("pipProgressBarEnabled") as HTMLInputElement).checked = items.pipProgressBarEnabled;
   (document.getElementById("isKaraokeEnabled") as HTMLInputElement).checked = items.isKaraokeEnabled;
   (document.getElementById("translate") as HTMLInputElement).checked = items.isTranslateEnabled;
+  setDropdownFieldValue("translationProvider", items.translationProvider || "google");
+  (document.getElementById("geminiApiKey") as HTMLInputElement).value = items.geminiApiKey || "";
+  renderGeminiModelsList(
+    items.geminiModelFallback || ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash"]
+  );
+  setDropdownFieldValue("geminiTranslationMode", items.geminiTranslationMode || "speed");
   setDropdownFieldValue("translationLanguage", items.translationLanguage);
   (document.getElementById("isRomanizationEnabled") as HTMLInputElement).checked = items.isRomanizationEnabled;
   setDropdownFieldValue("uiLanguage", items.uiLanguage);
@@ -649,8 +682,67 @@ function initLetterWaveSwitch(): void {
 
 // -- Dropdown fields --------------------------
 
+function renderGeminiModelsList(enabledModels: string[]) {
+  const list = document.getElementById("geminiModelFallbackList");
+  if (!list) return;
+  list.innerHTML = "";
+
+  const ALL_GEMINI_MODELS = ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash"];
+  const allModels = [...enabledModels, ...ALL_GEMINI_MODELS.filter(m => !enabledModels.includes(m))];
+
+  allModels.forEach(model => {
+    const isChecked = enabledModels.includes(model);
+    const li = document.createElement("li");
+    li.className = "sortable-item";
+    if (!isChecked) {
+      li.classList.add("disabled-item");
+    }
+    li.setAttribute("data-model", model);
+
+    const handleElem = document.createElement("span");
+    handleElem.classList.add("sortable-handle");
+    li.appendChild(handleElem);
+
+    const labelElem = document.createElement("label");
+    labelElem.classList.add("checkbox-container");
+
+    const checkboxElem = document.createElement("input");
+    checkboxElem.type = "checkbox";
+    checkboxElem.checked = isChecked;
+    checkboxElem.addEventListener("change", () => {
+      if (checkboxElem.checked) {
+        li.classList.remove("disabled-item");
+      } else {
+        li.classList.add("disabled-item");
+      }
+      saveOptions();
+    });
+    labelElem.appendChild(checkboxElem);
+
+    const checkmarkElem = document.createElement("span");
+    checkmarkElem.classList.add("checkmark");
+    labelElem.appendChild(checkmarkElem);
+
+    const textElem = document.createElement("span");
+    textElem.classList.add("provider-name");
+    textElem.textContent = model;
+
+    li.appendChild(labelElem);
+    li.appendChild(textElem);
+    list.appendChild(li);
+  });
+}
+
 function mountDropdownFields(): void {
   mountDropdownField("preferredVideoQuality", t("options_display_preferredVideoQuality"), videoQualityOptions());
+  mountDropdownField("translationProvider", t("options_language_translationProvider"), [
+    { value: "google", label: t("options_language_googleTranslate") },
+    { value: "gemini", label: t("options_language_geminiApi") },
+  ]);
+  mountDropdownField("geminiTranslationMode", t("options_language_translationMode"), [
+    { value: "speed", label: t("options_language_translationModeSpeed") },
+    { value: "quality", label: t("options_language_translationModeQuality") },
+  ]);
   mountDropdownField("translationLanguage", t("options_language_translationLanguage"), [...TRANSLATION_LANGUAGES]);
   mountDropdownField("uiLanguage", t("options_language_displayLanguage"), [
     { value: "auto", label: `${t("options_language_displayLanguageAuto")} (${chrome.i18n.getUILanguage()})` },
@@ -703,6 +795,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initPopupTabs(page => pageCard(page)?.place(true));
   initAboutToggle(page => pageCard(page)?.place(true));
   checkForStableRelease();
+
 });
 
 document.getElementById("options")?.addEventListener("change", event => {
@@ -1307,13 +1400,64 @@ let activeExclusionTab: "romanization" | "translation" = "romanization";
 function updateExclusionsConfigVisibility(): void {
   const romanization = (document.getElementById("isRomanizationEnabled") as HTMLInputElement | null)?.checked;
   const translate = (document.getElementById("translate") as HTMLInputElement | null)?.checked;
+  const translationProvider = (document.getElementById("translationProvider") as HTMLInputElement | null)?.value;
   const romanizationRow = document.getElementById("romanization-exclusions-btn");
   const translationRow = document.getElementById("translation-exclusions-btn");
+  const providerRow = document.getElementById("translationProviderContainer");
+  const geminiPanel = document.getElementById("geminiApiContainer");
+
   if (romanizationRow) romanizationRow.hidden = !romanization;
   if (translationRow) translationRow.hidden = !translate;
+  if (providerRow) providerRow.style.display = translate ? "flex" : "none";
+  if (geminiPanel) geminiPanel.style.display = translate && translationProvider === "gemini" ? "block" : "none";
 }
 
 function initLangExclusionsModal(): void {
+  const translationProvider = document.getElementById("translationProvider");
+  translationProvider?.addEventListener("change", () => {
+    updateExclusionsConfigVisibility();
+    saveOptions();
+  });
+
+  const clearTranslationCacheBtn = document.getElementById("clear-translation-cache-btn");
+  clearTranslationCacheBtn?.addEventListener("click", () => {
+    chrome.tabs.query({ url: "https://music.youtube.com/*" }, tabs => {
+      tabs.forEach(tab => {
+        chrome.tabs.sendMessage(tab.id!, { action: "clearTranslationCache" });
+      });
+    });
+    toast.success(t("options_language_translationCacheCleared"));
+  });
+
+  const geminiModelsBtn = document.getElementById("gemini-models-btn");
+  const geminiModalOverlay = document.getElementById("gemini-models-modal-overlay");
+  let geminiModal: Modal | null = null;
+  if (geminiModalOverlay) {
+    geminiModal = createModal(geminiModalOverlay);
+  }
+  geminiModelsBtn?.addEventListener("click", () => geminiModal?.open());
+
+  const resetFallbackBtn = document.getElementById("gemini-models-reset-btn");
+  if (resetFallbackBtn) {
+    resetFallbackBtn.textContent = t("options_resetToDefault", t("options_language_sequence"));
+    resetFallbackBtn.addEventListener("click", () => {
+      const defaultFallback = ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash"];
+      renderGeminiModelsList(defaultFallback);
+      setDropdownFieldValue("geminiTranslationMode", "speed");
+      saveOptions();
+    });
+  }
+
+  const geminiList = document.getElementById("geminiModelFallbackList");
+  if (geminiList) {
+    sortableWhenVisible(geminiList, {
+      animation: 150,
+      ghostClass: "dragging",
+      forceFallback: true,
+      onUpdate: saveOptions,
+    });
+  }
+
   const romanizationToggle = document.getElementById("isRomanizationEnabled") as HTMLInputElement;
   const translateToggle = document.getElementById("translate") as HTMLInputElement;
   const modalOverlay = document.getElementById("lang-exclusions-modal-overlay");
