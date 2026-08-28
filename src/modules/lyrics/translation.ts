@@ -138,7 +138,7 @@ export async function translateBatch(request: BatchRequest): Promise<BatchTransl
           }
         }
       } catch (e) {
-        log(TRANSLATION_ERROR_LOG, "Error detecting language with chrome.i18n.detectLanguage", e);
+        logCore(TRANSLATION_ERROR_LOG, "Error detecting language with chrome.i18n.detectLanguage", e);
       }
     }
   }
@@ -412,7 +412,7 @@ export function clearCache(): void {
       }
     });
   } catch (e) {
-    log(TRANSLATION_ERROR_LOG, "Error clearing local cache", e);
+    logCore(TRANSLATION_ERROR_LOG, "Error clearing local cache", e);
   }
 }
 
@@ -434,7 +434,7 @@ export async function clearTranslationCache(): Promise<void> {
       await chrome.storage.local.remove(keysToRemove);
     }
   } catch (e) {
-    log(TRANSLATION_ERROR_LOG, "Error clearing local cache", e);
+    logCore(TRANSLATION_ERROR_LOG, "Error clearing local cache", e);
   }
 }
 
