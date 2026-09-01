@@ -222,7 +222,7 @@ function injectLyrics(
     addNoLyricsButton(data.song, data.artist, data.album, data.duration, data.videoId);
   }
 
-  void processBatchTranslationsAndRomanizations(doc, data, lines, scripts, isStale, signal);
+  void processBatchTranslationsAndRomanizations(doc, data, lines, scripts, isStale, keepLoaderVisible, signal);
 
   if (data.segmentMap) {
     applySegmentMapToLyrics(lyricsData, lines, data.segmentMap);
@@ -246,12 +246,15 @@ async function processBatchTranslationsAndRomanizations(
   linesData: readonly LineData[],
   scripts: ScriptClassifier,
   isStale: () => boolean,
+  keepLoaderVisible = false,
   signal?: AbortSignal
 ): Promise<void> {
   const lyrics = data.lyrics!;
   const targetTranslationLang = AppState.translationLanguage;
   const isRomanizationEnabled = AppState.isRomanizationEnabled;
   const isTranslateEnabled = AppState.isTranslateEnabled;
+  const isGeminiProvider = AppState.translationProvider === "gemini";
+  const skipTranslationBatch = keepLoaderVisible && isGeminiProvider;
 
   const romanizationBatch: { index: number; text: string }[] = [];
   const translationBatch: { index: number; text: string }[] = [];
@@ -333,7 +336,7 @@ async function processBatchTranslationsAndRomanizations(
         injectTranslation(doc, lyricElement, translationResult, translationLanguage);
         recordLyricDecoration(index, { translation: translationResult, translationLanguage });
         didInjectCachedContent = true;
-      } else if (sourceLanguage !== targetTranslationLang || scripts.hasNonLatinScript(item.words) || !sourceLanguage) {
+      } else if (!skipTranslationBatch && (sourceLanguage !== targetTranslationLang || scripts.hasNonLatinScript(item.words) || !sourceLanguage)) {
         translationBatch.push({ index, text: item.words });
       }
     }
