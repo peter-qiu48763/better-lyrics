@@ -254,7 +254,17 @@ async function processBatchTranslationsAndRomanizations(
   const isRomanizationEnabled = AppState.isRomanizationEnabled;
   const isTranslateEnabled = AppState.isTranslateEnabled;
   const isGeminiProvider = AppState.translationProvider === "gemini";
-  const skipTranslationBatch = keepLoaderVisible && isGeminiProvider;
+  const hasFileTranslation = lyrics.some(
+    item =>
+      (item.translations &&
+        Object.entries(item.translations).some(
+          ([lang, text]) => langCodesMatch(targetTranslationLang, lang) && Boolean(text?.trim())
+        )) ||
+      (item.translation &&
+        langCodesMatch(targetTranslationLang, item.translation.lang) &&
+        Boolean(item.translation.text?.trim()))
+  );
+  const skipTranslationBatch = isGeminiProvider && (keepLoaderVisible || hasFileTranslation);
 
   const romanizationBatch: { index: number; text: string }[] = [];
   const translationBatch: { index: number; text: string }[] = [];
