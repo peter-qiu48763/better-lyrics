@@ -61,6 +61,22 @@
     "message": "Cache size",
     "description": "Cache size label"
   },
+  "options_general_translationCacheSize": {
+    "message": "Translation cache size",
+    "description": "Translation cache size label"
+  },
+  "options_general_totalTranslations": {
+    "message": "Total translations in cache",
+    "description": "Total translations in cache label"
+  },
+  "options_general_clearCachedTranslations": {
+    "message": "Clear cached translations",
+    "description": "Label for the clear cached translations action row"
+  },
+  "options_general_clearCachedTranslationsHint": {
+    "message": "They will be re-translated as you play",
+    "description": "Hint under the clear cached translations label"
+  },
 
   "options_display_fullscreenTab": {
     "message": "Fullscreen",

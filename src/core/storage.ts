@@ -268,6 +268,34 @@ export async function clearLyricCache(): Promise<{ count: number; size: number }
   return refreshCacheInfo();
 }
 
+export function isTranslationCacheKey(key: string): boolean {
+  return key.startsWith("gemini_");
+}
+
+export async function getTranslationCacheInfo(): Promise<{ count: number; size: number }> {
+  const result = await chrome.storage.local.get(null);
+  const translationKeys = Object.keys(result).filter(isTranslationCacheKey);
+
+  const totalSize = translationKeys.reduce((acc, key) => {
+    const item = result[key];
+    return acc + JSON.stringify(item).length;
+  }, 0);
+
+  return {
+    count: translationKeys.length,
+    size: totalSize,
+  };
+}
+
+export async function clearTranslationStorageCache(): Promise<{ count: number; size: number }> {
+  const result = await chrome.storage.local.get(null);
+  const keysToRemove = Object.keys(result).filter(isTranslationCacheKey);
+  if (keysToRemove.length > 0) {
+    await chrome.storage.local.remove(keysToRemove);
+  }
+  return { count: 0, size: 0 };
+}
+
 export async function clearSongCache(videoId: string): Promise<void> {
   if (!videoId) return;
   try {

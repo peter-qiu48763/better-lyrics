@@ -20,7 +20,7 @@ import {
   invalidateDisplayName,
   signPayload,
 } from "@core/keyIdentity";
-import { clearAllOffsets, clearLyricCache, getOffsetInfo, refreshCacheInfo } from "@core/storage";
+import { clearAllOffsets, clearLyricCache, clearTranslationStorageCache, getOffsetInfo, getTranslationCacheInfo, isTranslationCacheKey, refreshCacheInfo } from "@core/storage";
 import { KARAOKE_DEFAULTS } from "@modules/karaoke/defaults";
 import { syncTypeColors } from "@modules/ui/lyricsDock/icons";
 import { migrateLetterWavePref, type LetterWavePref } from "@modules/settings/letterWave";
@@ -267,6 +267,46 @@ const clearTransientLyrics = async (): Promise<void> => {
   }
 };
 
+const updateTranslationCacheDisplay = (info: { count: number; size: number }): void => {
+  const countElem = document.getElementById("translation-count");
+  if (countElem) countElem.textContent = String(info.count);
+  const sizeElem = document.getElementById("translation-cache-size");
+  if (sizeElem) sizeElem.textContent = _formatBytes(info.size);
+};
+
+const refreshTranslationCacheInfo = async (): Promise<{ count: number; size: number }> => {
+  try {
+    const info = await getTranslationCacheInfo();
+    updateTranslationCacheDisplay(info);
+    return info;
+  } catch (error) {
+    warnCore("Failed to get translation cache info:", error);
+    return { count: 0, size: 0 };
+  }
+};
+
+const clearTransientTranslations = async (): Promise<void> => {
+  try {
+    const current = await refreshTranslationCacheInfo();
+    if (current.count === 0 && current.size === 0) {
+      toast.info(t("options_alert_nothingToClear"));
+      return;
+    }
+    await clearTranslationStorageCache();
+    updateTranslationCacheDisplay({ count: 0, size: 0 });
+    const tabs = await chrome.tabs.query({ url: "https://music.youtube.com/*" });
+    tabs.forEach(tab => {
+      if (tab.id != null) {
+        chrome.tabs.sendMessage(tab.id, { action: "clearTranslationCache" });
+      }
+    });
+    toast.success(t("options_language_translationCacheCleared"));
+  } catch (error) {
+    errorCore("Failed to clear cached translations:", error);
+    toast.error(t("options_alert_cacheClearFailed"));
+  }
+};
+
 const _formatBytes = (bytes: number, decimals = 2): string => {
   if (!+bytes) return "0 Bytes";
 
@@ -294,6 +334,8 @@ const subscribeToCacheInfo = (): void => {
           size: number;
         },
       });
+    } else if (area === "local" && Object.keys(changes).some(isTranslationCacheKey)) {
+      void refreshTranslationCacheInfo();
     }
   });
 };
@@ -406,6 +448,10 @@ const restoreOptions = (): void => {
   });
 
   document.getElementById("clear-cache")!.addEventListener("click", () => clearTransientLyrics());
+  document
+    .getElementById("clear-translation-cache-btn")
+    ?.addEventListener("click", () => void clearTransientTranslations());
+  void refreshTranslationCacheInfo();
   setupUnisonActionsModal();
   initPictureInPictureModal();
   initOffsetModal();
@@ -1417,16 +1463,6 @@ function initLangExclusionsModal(): void {
   translationProvider?.addEventListener("change", () => {
     updateExclusionsConfigVisibility();
     saveOptions();
-  });
-
-  const clearTranslationCacheBtn = document.getElementById("clear-translation-cache-btn");
-  clearTranslationCacheBtn?.addEventListener("click", () => {
-    chrome.tabs.query({ url: "https://music.youtube.com/*" }, tabs => {
-      tabs.forEach(tab => {
-        chrome.tabs.sendMessage(tab.id!, { action: "clearTranslationCache" });
-      });
-    });
-    toast.success(t("options_language_translationCacheCleared"));
   });
 
   const geminiModelsBtn = document.getElementById("gemini-models-btn");

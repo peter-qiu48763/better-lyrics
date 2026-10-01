@@ -23,7 +23,7 @@ Object.assign(globalThis, {
   },
 });
 
-const { clearLyricCache, getUpdatedCacheInfo, refreshCacheInfo } = await import("@core/storage");
+const { clearLyricCache, clearTranslationStorageCache, getTranslationCacheInfo, getUpdatedCacheInfo, refreshCacheInfo } = await import("@core/storage");
 
 const entry = { type: "transient", value: "x", expiry: 0 };
 const seed = (items: Record<string, unknown>): void => {
@@ -121,6 +121,27 @@ const seed = (items: Record<string, unknown>): void => {
   failures.localRemove = true;
   await assert.rejects(clearLyricCache(), /local remove failed/, "a failed removal rejects");
   failures.localRemove = false;
+}
+
+// -- Translation cache -------------------
+{
+  seed({
+    "gemini_lrclib_flash_video1_zh-TW_10": entry,
+    "gemini_lrclib_flash_video2_ja_15": entry,
+    "blyrics_abcdefghijk_yt-lyrics": entry,
+    userIdentity: { keyId: "k" },
+  });
+  const tInfo = await getTranslationCacheInfo();
+  assert.equal(tInfo.count, 2, "counts gemini translation cache keys");
+  assert.equal(tInfo.size, JSON.stringify(entry).length * 2, "size covers only translation cache keys");
+
+  await clearTranslationStorageCache();
+  assert.deepEqual(
+    Object.keys(local).sort(),
+    ["blyrics_abcdefghijk_yt-lyrics", "userIdentity"],
+    "clearing translation cache leaves lyric cache and identity untouched"
+  );
+  assert.deepEqual(await getTranslationCacheInfo(), { count: 0, size: 0 });
 }
 
 console.log("storage self-check passed");
