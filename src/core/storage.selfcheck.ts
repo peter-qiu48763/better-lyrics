@@ -30,7 +30,9 @@ Object.assign(globalThis, {
 
 const {
   clearLyricCache,
+  clearTranslationStorageCache,
   getStorageBreakdown,
+  getTranslationCacheInfo,
   getUpdatedCacheInfo,
   refreshCacheInfo,
   storageCategoryForKey,
@@ -152,6 +154,7 @@ const seed = (items: Record<string, unknown>): void => {
   assert.equal(storageCategoryForKey("userThemeInstalls"), "themes");
   assert.equal(storageCategoryForKey("blyrics_featured_themes"), "themes");
   assert.equal(storageCategoryForKey("blyricsOffset_abc_bLyrics-synced"), "offsets");
+  assert.equal(storageCategoryForKey("gemini_lrclib_flash_video1_zh-TW_10"), "translations");
   assert.equal(storageCategoryForKey("jwtToken"), "other");
   assert.equal(storageCategoryForKey("userIdentity"), "other");
   assert.equal(storageCategoryForKey("blyrics_stableReleaseCheck"), "other", "a blyrics_ prefix alone is not lyrics");
@@ -218,6 +221,7 @@ const seed = (items: Record<string, unknown>): void => {
 {
   seed({
     "blyrics_aaaaaaaaaaa_lrclib-synced": entry,
+    "gemini_lrclib_flash_video1_zh-TW_10": entry,
     "storeTheme:abc": { css: "a{}" },
     "blyricsOffset_aaaaaaaaaaa_lrclib-synced": entry,
     jwtToken: "t",
@@ -227,6 +231,7 @@ const seed = (items: Record<string, unknown>): void => {
   assert.equal(breakdown.lyrics.songs, 1);
   assert.deepEqual(breakdown.bytes, {
     lyrics: bytes("blyrics_aaaaaaaaaaa_lrclib-synced"),
+    translations: bytes("gemini_lrclib_flash_video1_zh-TW_10"),
     themes: bytes("storeTheme:abc"),
     offsets: bytes("blyricsOffset_aaaaaaaaaaa_lrclib-synced"),
     other: bytes("jwtToken"),
@@ -250,6 +255,27 @@ const seed = (items: Record<string, unknown>): void => {
   const empty = await getStorageBreakdown();
   assert.equal(empty.totalBytes, 0);
   assert.equal(empty.lyrics.songs, 0);
+}
+
+// -- Translation cache -------------------
+{
+  seed({
+    "gemini_lrclib_flash_video1_zh-TW_10": entry,
+    "gemini_lrclib_flash_video2_ja_15": entry,
+    "blyrics_abcdefghijk_yt-lyrics": entry,
+    userIdentity: { keyId: "k" },
+  });
+  const tInfo = await getTranslationCacheInfo();
+  assert.equal(tInfo.count, 2, "counts gemini translation cache keys");
+  assert.equal(tInfo.size, JSON.stringify(entry).length * 2, "size covers only translation cache keys");
+
+  await clearTranslationStorageCache();
+  assert.deepEqual(
+    Object.keys(local).sort(),
+    ["blyrics_abcdefghijk_yt-lyrics", "userIdentity"],
+    "clearing translation cache leaves lyric cache and identity untouched"
+  );
+  assert.deepEqual(await getTranslationCacheInfo(), { count: 0, size: 0 });
 }
 
 console.log("storage self-check passed");
