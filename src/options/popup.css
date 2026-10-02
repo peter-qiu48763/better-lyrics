@@ -1031,8 +1031,16 @@ body.is-editing .cm-scroller { scrollbar-width: thin; scrollbar-color: var(--scr
   gap: 12px;
   min-height: 40px;
 }
-.providers > li .ui-sync-tag { flex: none; margin-inline-start: auto; }
-.providers > li.disabled-item .ui-sync-tag { opacity: 0.5; }
+.providers > li .ui-sync-tag,
+.providers > li .ui-badge { flex: none; margin-inline-start: auto; }
+.providers > li.disabled-item .ui-sync-tag,
+.providers > li.disabled-item .ui-badge { opacity: 0.5; }
+
+.gemini-translation-mode-row {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid var(--divider);
+}
 
 @media (prefers-reduced-motion: reduce) {
   .head-link svg { transition: none; }

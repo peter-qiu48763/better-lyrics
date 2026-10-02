@@ -789,54 +789,87 @@ function initLetterWaveSwitch(): void {
 
 // -- Dropdown fields --------------------------
 
+function createGeminiModelTag(model: string): HTMLElement | null {
+  const tag = document.createElement("span");
+  tag.className = "ui-badge ui-badge--accent";
+  if (model.includes("flash-lite")) {
+    tag.textContent = "Flash-Lite";
+  } else if (model.includes("flash")) {
+    tag.textContent = "Flash";
+  } else if (model.includes("pro")) {
+    tag.textContent = "Pro";
+  } else {
+    return null;
+  }
+  return tag;
+}
+
 function renderGeminiModelsList(enabledModels: string[]) {
   const list = document.getElementById("geminiModelFallbackList");
   if (!list) return;
-  list.innerHTML = "";
+  list.replaceChildren();
 
   const ALL_GEMINI_MODELS = ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash"];
   const allModels = [...enabledModels, ...ALL_GEMINI_MODELS.filter(m => !enabledModels.includes(m))];
 
   allModels.forEach(model => {
     const isChecked = enabledModels.includes(model);
-    const li = document.createElement("li");
-    li.className = "sortable-item";
-    if (!isChecked) {
-      li.classList.add("disabled-item");
-    }
-    li.setAttribute("data-model", model);
+    const liElem = document.createElement("li");
+    liElem.classList.add("ui-row", "sortable-item");
+    liElem.setAttribute("data-model", model);
+    liElem.id = "gm-" + model;
 
     const handleElem = document.createElement("span");
     handleElem.classList.add("sortable-handle");
-    li.appendChild(handleElem);
+    liElem.appendChild(handleElem);
 
     const labelElem = document.createElement("label");
     labelElem.classList.add("checkbox-container");
 
-    const checkboxElem = document.createElement("input");
-    checkboxElem.type = "checkbox";
-    checkboxElem.checked = isChecked;
-    checkboxElem.addEventListener("change", () => {
-      if (checkboxElem.checked) {
-        li.classList.remove("disabled-item");
-      } else {
-        li.classList.add("disabled-item");
-      }
-      saveOptions();
-    });
-    labelElem.appendChild(checkboxElem);
+    const switchElem = document.createElement("span");
+    switchElem.className = "ui-switch ui-switch--compact";
 
-    const checkmarkElem = document.createElement("span");
-    checkmarkElem.classList.add("checkmark");
-    labelElem.appendChild(checkmarkElem);
+    const checkboxElem = document.createElement("input");
+    checkboxElem.className = "ui-switch__input provider-checkbox";
+    checkboxElem.type = "checkbox";
+    checkboxElem.setAttribute("role", "switch");
+    checkboxElem.checked = isChecked;
+    checkboxElem.id = "gm-" + model + "-checkbox";
+
+    const trackElem = document.createElement("span");
+    trackElem.className = "ui-switch__track";
+    trackElem.setAttribute("aria-hidden", "true");
+
+    switchElem.append(checkboxElem, trackElem);
+    labelElem.appendChild(switchElem);
 
     const textElem = document.createElement("span");
     textElem.classList.add("provider-name");
     textElem.textContent = model;
+    labelElem.appendChild(textElem);
 
-    li.appendChild(labelElem);
-    li.appendChild(textElem);
-    list.appendChild(li);
+    liElem.appendChild(labelElem);
+
+    const tagElem = createGeminiModelTag(model);
+    if (tagElem) {
+      liElem.appendChild(tagElem);
+    }
+
+    const styleFromCheckState = () => {
+      if (checkboxElem.checked) {
+        liElem.classList.remove("disabled-item");
+      } else {
+        liElem.classList.add("disabled-item");
+      }
+    };
+
+    checkboxElem.addEventListener("change", () => {
+      styleFromCheckState();
+      saveOptions();
+    });
+
+    styleFromCheckState();
+    list.appendChild(liElem);
   });
 }
 
@@ -1552,6 +1585,8 @@ function initLangExclusionsModal(): void {
       animation: 150,
       ghostClass: "dragging",
       forceFallback: true,
+      filter: ".checkbox-container",
+      preventOnFilter: false,
       onUpdate: saveOptions,
     });
   }
