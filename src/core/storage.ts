@@ -231,7 +231,7 @@ export function isLyricCacheKey(key: string): boolean {
 
 // -- Storage breakdown --------------------------
 
-export type StorageCategory = "lyrics" | "themes" | "offsets" | "other";
+export type StorageCategory = "lyrics" | "translations" | "themes" | "offsets" | "other";
 
 const THEME_STORAGE_KEYS = new Set([
   "storeThemeIndex",
@@ -248,6 +248,7 @@ const THEME_STORAGE_PREFIXES = ["storeTheme:", "customCSS_chunk_"];
 
 export function storageCategoryForKey(key: string): StorageCategory {
   if (isLyricCacheKey(key)) return "lyrics";
+  if (isTranslationCacheKey(key)) return "translations";
   if (THEME_STORAGE_KEYS.has(key) || THEME_STORAGE_PREFIXES.some(prefix => key.startsWith(prefix))) return "themes";
   if (key.startsWith(OFFSET_STORAGE_PREFIX)) return "offsets";
   return "other";
@@ -295,7 +296,7 @@ export interface StorageBreakdown {
   totalBytes: number;
 }
 
-const STORAGE_CATEGORIES: StorageCategory[] = ["lyrics", "themes", "offsets", "other"];
+const STORAGE_CATEGORIES: StorageCategory[] = ["lyrics", "translations", "themes", "offsets", "other"];
 
 function estimateBytes(items: Record<string, unknown>, keys: string[]): number {
   return keys.reduce((sum, key) => sum + key.length + JSON.stringify(items[key]).length, 0);
@@ -374,6 +375,34 @@ export async function clearLyricCache(): Promise<{ count: number; size: number }
   const result = await chrome.storage.local.get(null);
   await chrome.storage.local.remove(Object.keys(result).filter(isLyricCacheKey));
   return refreshCacheInfo();
+}
+
+export function isTranslationCacheKey(key: string): boolean {
+  return key.startsWith("gemini_");
+}
+
+export async function getTranslationCacheInfo(): Promise<{ count: number; size: number }> {
+  const result = await chrome.storage.local.get(null);
+  const translationKeys = Object.keys(result).filter(isTranslationCacheKey);
+
+  const totalSize = translationKeys.reduce((acc, key) => {
+    const item = result[key];
+    return acc + JSON.stringify(item).length;
+  }, 0);
+
+  return {
+    count: translationKeys.length,
+    size: totalSize,
+  };
+}
+
+export async function clearTranslationStorageCache(): Promise<{ count: number; size: number }> {
+  const result = await chrome.storage.local.get(null);
+  const keysToRemove = Object.keys(result).filter(isTranslationCacheKey);
+  if (keysToRemove.length > 0) {
+    await chrome.storage.local.remove(keysToRemove);
+  }
+  return { count: 0, size: 0 };
 }
 
 export async function clearSongCache(videoId: string): Promise<void> {
