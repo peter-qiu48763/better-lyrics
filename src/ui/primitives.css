@@ -932,7 +932,9 @@ button.ui-row:hover .ui-row__chevron { color: rgba(255, 255, 255, 0.7); transfor
   background: linear-gradient(rgba(255, 255, 255, 0.03), transparent 60%), var(--raised-bg);
   box-shadow: var(--raised-edge);
 }
+.ui-stat__head { display: flex; align-items: baseline; gap: 6px; }
 .ui-stat__value { font-size: var(--font-size-2xl); font-weight: 600; letter-spacing: -0.01em; color: var(--text-strong); }
+.ui-stat__sub-val { font-size: var(--font-size-sm); font-weight: 500; color: var(--text-muted); white-space: nowrap; }
 .ui-stat__label { font-size: var(--font-size-sm); color: var(--text-label); }
 .ui-stat__icon { position: absolute; top: 12px; right: var(--row-pad); width: 18px; height: 18px; color: var(--text-muted); }
 /* Segments are 22px-tall hit targets, min 10px wide; only the 6px stripe in their middle is painted */

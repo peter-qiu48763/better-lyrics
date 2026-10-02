@@ -25,8 +25,11 @@ import {
 import {
   clearAllOffsets,
   clearLyricCache,
+  clearTranslationStorageCache,
   getOffsetInfo,
   getStorageBreakdown,
+  getTranslationCacheInfo,
+  isTranslationCacheKey,
   type StorageBreakdown,
   type StorageCategory,
 } from "@core/storage";
@@ -277,6 +280,55 @@ const clearTransientLyrics = async (): Promise<void> => {
   }
 };
 
+const updateTranslationCacheDisplay = (info: { count: number; size: number }): void => {
+  const countElem = document.getElementById("translation-count");
+  if (countElem) {
+    if (info.count > 0) {
+      countElem.textContent = t("options_general_translationCountSub", [info.count.toLocaleString()]);
+      countElem.hidden = false;
+    } else {
+      countElem.textContent = "";
+      countElem.hidden = true;
+    }
+  }
+  const sizeElem = document.getElementById("translation-cache-size");
+  if (sizeElem) sizeElem.textContent = _formatBytes(info.size);
+};
+
+const refreshTranslationCacheInfo = async (): Promise<{ count: number; size: number }> => {
+  try {
+    const info = await getTranslationCacheInfo();
+    updateTranslationCacheDisplay(info);
+    return info;
+  } catch (error) {
+    warnCore("Failed to get translation cache info:", error);
+    return { count: 0, size: 0 };
+  }
+};
+
+const clearTransientTranslations = async (): Promise<void> => {
+  try {
+    const current = await refreshTranslationCacheInfo();
+    if (current.count === 0 && current.size === 0) {
+      toast.info(t("options_alert_nothingToClear"));
+      return;
+    }
+    await clearTranslationStorageCache();
+    updateTranslationCacheDisplay({ count: 0, size: 0 });
+    await renderCacheStats();
+    const tabs = await chrome.tabs.query({ url: "https://music.youtube.com/*" });
+    tabs.forEach(tab => {
+      if (tab.id != null) {
+        chrome.tabs.sendMessage(tab.id, { action: "clearTranslationCache" });
+      }
+    });
+    toast.success(t("options_language_translationCacheCleared"));
+  } catch (error) {
+    errorCore("Failed to clear cached translations:", error);
+    toast.error(t("options_alert_cacheClearFailed"));
+  }
+};
+
 const _formatBytes = (bytes: number, decimals = 2): string => {
   if (!+bytes) return "0 Bytes";
 
@@ -293,9 +345,10 @@ const _formatBytes = (bytes: number, decimals = 2): string => {
 
 const STORAGE_SEGMENTS: { category: StorageCategory; key: string; color: string }[] = [
   { category: "lyrics", key: "unison_lyrics", color: "var(--stat-step-1)" },
-  { category: "themes", key: "options_tab_themes", color: "var(--stat-step-2)" },
-  { category: "offsets", key: "options_offsetModal_perSongCount", color: "var(--stat-step-3)" },
-  { category: "other", key: "unison_report_other", color: "var(--stat-step-4)" },
+  { category: "translations", key: "options_translation_tab", color: "var(--stat-step-2)" },
+  { category: "themes", key: "options_tab_themes", color: "var(--stat-step-3)" },
+  { category: "offsets", key: "options_offsetModal_perSongCount", color: "var(--stat-step-4)" },
+  { category: "other", key: "unison_report_other", color: "var(--stat-step-5)" },
 ];
 const SYNC_TYPES: SyncType[] = ["syllable", "word", "line", "unsynced"];
 
@@ -337,8 +390,14 @@ const refreshCacheStats = (): void => {
 
 const subscribeToCacheStats = (): void => {
   refreshCacheStats();
-  chrome.storage.onChanged.addListener((_changes, area) => {
-    if (area === "local") refreshCacheStats();
+  void refreshTranslationCacheInfo();
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area === "local") {
+      refreshCacheStats();
+      if (Object.keys(changes).some(isTranslationCacheKey)) {
+        void refreshTranslationCacheInfo();
+      }
+    }
   });
 };
 
@@ -440,6 +499,10 @@ const restoreOptions = (): void => {
   });
 
   document.getElementById("clear-cache")!.addEventListener("click", () => clearTransientLyrics());
+  document
+    .getElementById("clear-translation-cache-btn")
+    ?.addEventListener("click", () => void clearTransientTranslations());
+  void refreshTranslationCacheInfo();
   setupUnisonActionsModal();
   initPictureInPictureModal();
   initOffsetModal();
@@ -1451,16 +1514,6 @@ function initLangExclusionsModal(): void {
   translationProvider?.addEventListener("change", () => {
     updateExclusionsConfigVisibility();
     saveOptions();
-  });
-
-  const clearTranslationCacheBtn = document.getElementById("clear-translation-cache-btn");
-  clearTranslationCacheBtn?.addEventListener("click", () => {
-    chrome.tabs.query({ url: "https://music.youtube.com/*" }, tabs => {
-      tabs.forEach(tab => {
-        chrome.tabs.sendMessage(tab.id!, { action: "clearTranslationCache" });
-      });
-    });
-    toast.success(t("options_language_translationCacheCleared"));
   });
 
   const geminiModelsBtn = document.getElementById("gemini-models-btn");

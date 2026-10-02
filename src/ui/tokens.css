@@ -126,9 +126,10 @@
 
   /* -- Stats: neutral steps for monochrome breakdown bars, strongest first -- */
   --stat-step-1: rgba(255, 255, 255, 0.75);
-  --stat-step-2: rgba(255, 255, 255, 0.45);
-  --stat-step-3: rgba(255, 255, 255, 0.28);
-  --stat-step-4: rgba(255, 255, 255, 0.16);
+  --stat-step-2: rgba(255, 255, 255, 0.55);
+  --stat-step-3: rgba(255, 255, 255, 0.38);
+  --stat-step-4: rgba(255, 255, 255, 0.24);
+  --stat-step-5: rgba(255, 255, 255, 0.14);
 
   /* -- Layers: portalled menus sit above page modals (max 100000), tooltips above menus.
      Keep these at 6 digits or fewer: the CSS minifier rounds longer custom property numbers, which made both equal. -- */
