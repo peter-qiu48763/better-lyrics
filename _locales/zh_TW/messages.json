@@ -94,7 +94,7 @@
     "description": "Total translations in cache label"
   },
   "options_general_translationCountSub": {
-    "message": "+ $1 翻譯",
+    "message": "+ $COUNT$ 翻譯",
     "description": "Translation count next to total lyrics number",
     "placeholders": {
       "count": {
