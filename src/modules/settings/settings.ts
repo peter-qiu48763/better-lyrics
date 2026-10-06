@@ -248,7 +248,6 @@ export function listenForPopupMessages(): void {
       clearTranslationCache();
       sendResponse({ success: true });
     } else if (request.action === "updateSettings") {
-      clearTranslationCache();
       applyLoggingSetting();
       hideCursorOnIdle();
       handleSettings();
