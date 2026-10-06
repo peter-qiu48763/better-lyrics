@@ -887,6 +887,7 @@ function mountDropdownFields(): void {
     { value: "speed", label: t("options_language_translationModeSpeed") },
     { value: "quality", label: t("options_language_translationModeQuality") },
   ]);
+  document.getElementById("geminiTranslationMode")?.addEventListener("change", saveOptions);
   mountDropdownField("translationLanguage", t("options_language_translationLanguage"), [...TRANSLATION_LANGUAGES]);
   mountDropdownField("uiLanguage", t("options_language_displayLanguage"), [
     { value: "auto", label: `${t("options_language_displayLanguageAuto")} (${chrome.i18n.getUILanguage()})` },
@@ -942,7 +943,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   initPopupTabs(page => pageCard(page)?.place(true));
   initAboutToggle(page => pageCard(page)?.place(true));
   checkForStableRelease();
-
 });
 
 document.getElementById("options")?.addEventListener("change", event => {
@@ -1581,6 +1581,12 @@ function initLangExclusionsModal(): void {
   let geminiModal: Modal | null = null;
   if (geminiModalOverlay) {
     geminiModal = createModal(geminiModalOverlay);
+    geminiModalOverlay.addEventListener("change", event => {
+      const target = event.target as HTMLElement;
+      if (target.id === "geminiTranslationMode") {
+        saveOptions();
+      }
+    });
   }
   geminiModelsBtn?.addEventListener("click", () => geminiModal?.open());
 
