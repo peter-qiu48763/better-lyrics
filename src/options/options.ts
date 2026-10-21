@@ -185,13 +185,13 @@ const getOptionsFromForm = (): Options => {
     isTranslateEnabled: (document.getElementById("translate") as HTMLInputElement).checked,
     translationProvider: ((document.getElementById("translationProvider") as HTMLInputElement | null)?.value ||
       "google") as "google" | "gemini",
-    geminiApiKey: (document.getElementById("geminiApiKey") as HTMLInputElement).value,
-    geminiModelFallback: Array.from(document.getElementById("geminiModelFallbackList")!.children)
-      .filter(c => {
-        const checkbox = c.querySelector("input[type='checkbox']") as HTMLInputElement | null;
-        return checkbox ? checkbox.checked : true;
-      })
-      .map(c => c.getAttribute("data-model")!),
+    geminiApiKey: (document.getElementById("geminiApiKey") as HTMLInputElement).value.trim(),
+    geminiModelFallback: Array.from(document.getElementById("geminiModelFallbackList")!.children).map(c => {
+      const model = c.getAttribute("data-model")!;
+      const checkbox = c.querySelector("input[type='checkbox']") as HTMLInputElement | null;
+      const enabled = checkbox ? checkbox.checked : true;
+      return enabled ? model : `d_${model}`;
+    }),
     geminiTranslationMode: ((document.getElementById("geminiTranslationMode") as HTMLInputElement | null)?.value ||
       "speed") as "speed" | "quality",
     translationLanguage: (document.getElementById("translationLanguage") as HTMLInputElement).value,
@@ -301,8 +301,6 @@ const updateTranslationCacheDisplay = (info: { count: number; size: number }): v
       countElem.hidden = true;
     }
   }
-  const sizeElem = document.getElementById("translation-cache-size");
-  if (sizeElem) sizeElem.textContent = _formatBytes(info.size);
 };
 
 const refreshTranslationCacheInfo = async (): Promise<{ count: number; size: number }> => {
@@ -808,16 +806,18 @@ function createGeminiModelTag(model: string): HTMLElement | null {
   return tag;
 }
 
-function renderGeminiModelsList(enabledModels: string[]) {
+function renderGeminiModelsList(storedModels: string[]) {
   const list = document.getElementById("geminiModelFallbackList");
   if (!list) return;
   list.replaceChildren();
 
   const ALL_GEMINI_MODELS = ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash"];
-  const allModels = [...enabledModels, ...ALL_GEMINI_MODELS.filter(m => !enabledModels.includes(m))];
+  const mergedModels = mergePreferredProviders(storedModels, ALL_GEMINI_MODELS);
 
-  allModels.forEach(model => {
-    const isChecked = enabledModels.includes(model);
+  mergedModels.forEach(entry => {
+    const isDisabled = entry.startsWith("d_");
+    const model = isDisabled ? entry.slice(2) : entry;
+    const isChecked = !isDisabled;
     const liElem = document.createElement("li");
     liElem.classList.add("ui-row", "sortable-item");
     liElem.setAttribute("data-model", model);
@@ -936,6 +936,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   initTooltips(document.body);
   initTriSwitch("letterWaveSwitch");
   initTriSwitch("fullscreenControlsSwitch");
+  initLangExclusionsModal();
   document.getElementById("isFullScreenDisabled")?.addEventListener("change", syncFullscreenDependents);
   restoreOptions();
   initPopupCards();
@@ -1006,7 +1007,6 @@ document.addEventListener("DOMContentLoaded", () => {
   setupYourThemesButton();
   const themesReady = localeReady.then(initializeThemes).catch(err => errorCore("Failed to initialize themes:", err));
   setupLazyCodeEditor(themesReady);
-  initLangExclusionsModal();
 
   document.getElementById("browse-themes-btn")?.addEventListener("click", () => {
     chrome.tabs.create({
@@ -1565,8 +1565,8 @@ function updateExclusionsConfigVisibility(): void {
 
   if (romanizationRow) romanizationRow.hidden = !romanization;
   if (translationRow) translationRow.hidden = !translate;
-  if (providerRow) providerRow.style.display = translate ? "flex" : "none";
-  if (geminiPanel) geminiPanel.style.display = translate && translationProvider === "gemini" ? "block" : "none";
+  if (providerRow) providerRow.hidden = !translate;
+  if (geminiPanel) geminiPanel.hidden = !(translate && translationProvider === "gemini");
 }
 
 function initLangExclusionsModal(): void {
@@ -1581,12 +1581,6 @@ function initLangExclusionsModal(): void {
   let geminiModal: Modal | null = null;
   if (geminiModalOverlay) {
     geminiModal = createModal(geminiModalOverlay);
-    geminiModalOverlay.addEventListener("change", event => {
-      const target = event.target as HTMLElement;
-      if (target.id === "geminiTranslationMode") {
-        saveOptions();
-      }
-    });
   }
   geminiModelsBtn?.addEventListener("click", () => geminiModal?.open());
 

@@ -130,6 +130,8 @@ export async function translateBatch(request: BatchRequest): Promise<BatchTransl
     return { results: lines.map(() => null), detectedLanguage: "" };
   }
 
+  let detectedSourceLang = request.sourceLanguage || "";
+
   if (typeof chrome !== "undefined" && chrome.i18n && typeof chrome.i18n.detectLanguage === "function") {
     const sampleText = lines
       .map(line => line.trim())
@@ -145,6 +147,9 @@ export async function translateBatch(request: BatchRequest): Promise<BatchTransl
 
         if (detection && detection.isReliable && detection.languages && detection.languages.length > 0) {
           const detectedLang = detection.languages[0].language;
+          if (!detectedSourceLang) {
+            detectedSourceLang = detectedLang;
+          }
           if (langCodesMatch(detectedLang, targetLanguage)) {
             const results = lines.map(line => ({
               originalLanguage: detectedLang,
@@ -160,7 +165,10 @@ export async function translateBatch(request: BatchRequest): Promise<BatchTransl
   }
 
   if (AppState.translationProvider === "gemini") {
-    return await translateBatchGemini(request);
+    return await translateBatchGemini({
+      ...request,
+      sourceLanguage: detectedSourceLang || undefined,
+    });
   }
 
   const results: (TranslationResult | null)[] = new Array(lines.length).fill(null);
@@ -473,16 +481,6 @@ export function clearCache(): void {
   cache.romanization.clear();
   cache.translation.clear();
   cache.unisonLatinFallback.clear();
-  try {
-    chrome.storage.local.get(null).then(items => {
-      const keysToRemove = Object.keys(items).filter(key => key.startsWith("gemini_"));
-      if (keysToRemove.length > 0) {
-        chrome.storage.local.remove(keysToRemove);
-      }
-    });
-  } catch (e) {
-    logCore(TRANSLATION_ERROR_LOG, "Error clearing local cache", e);
-  }
 }
 
 export function getTranslationFromCache(text: string, targetLanguage: string): TranslationResult | null {

@@ -225,14 +225,14 @@
 								<span class="ui-row__label" id="translate-label">__MSG_options_language_translate__</span>
 								<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="translate" aria-labelledby="translate-label"><span class="ui-switch__track" aria-hidden="true"></span></label>
 							</div>
-							<div class="ui-row" id="translationProviderContainer" style="display: none;">
+							<div class="ui-row" id="translationProviderContainer" hidden="">
 								<span class="ui-row__label">__MSG_options_language_translationProvider__</span>
 								<div data-dropdown="translationProvider"></div>
 							</div>
-							<div class="ui-panel" id="geminiApiContainer" style="display: none; padding: 0.5rem 0.75rem;">
-								<p style="margin-bottom: 0.5rem; font-size: 0.85rem; opacity: 0.8;">__MSG_options_language_geminiApiSettings__</p>
-								<input type="password" id="geminiApiKey" placeholder="__MSG_options_language_geminiApiKeyPlaceholder__" style="margin-bottom: 0.5rem; width: 100%; box-sizing: border-box; background: var(--bg-1); border: 1px solid var(--border); color: var(--fg); padding: 0.4rem; border-radius: 4px;">
-								<div class="btn-row" style="display: flex; gap: 0.5rem;">
+							<div class="gemini-api-panel" id="geminiApiContainer" hidden="">
+								<p class="gemini-api-panel__label">__MSG_options_language_geminiApiSettings__</p>
+								<input type="password" id="geminiApiKey" class="ui-field gemini-api-panel__input" placeholder="__MSG_options_language_geminiApiKeyPlaceholder__">
+								<div class="gemini-api-panel__actions">
 									<button class="ui-button ui-button--compact" id="gemini-models-btn" type="button">
 										__MSG_options_language_manageModelFallback__
 									</button>
@@ -535,7 +535,7 @@
 					</button>
 				</div>
 				<div class="ui-modal__body" data-scroll-fade="">
-					<p class="ui-modal__message" style="margin-bottom:1rem; opacity:0.8; font-size:0.9rem;">__MSG_options_language_dragToReorder__</p>
+					<p class="ui-modal__message">__MSG_options_language_dragToReorder__</p>
 					<ul id="geminiModelFallbackList" class="sortable-list providers" style="padding:0; margin:0; list-style:none;"></ul>
 					<div class="ui-row gemini-translation-mode-row">
 						<span class="ui-row__label">__MSG_options_language_translationMode__</span>

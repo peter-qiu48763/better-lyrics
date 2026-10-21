@@ -383,7 +383,12 @@ export function isTranslationCacheKey(key: string): boolean {
 
 export async function getTranslationCacheInfo(): Promise<{ count: number; size: number }> {
   const result = await chrome.storage.local.get(null);
-  const translationKeys = Object.keys(result).filter(isTranslationCacheKey);
+  const now = Date.now();
+  const translationKeys = Object.keys(result).filter(key => {
+    if (!isTranslationCacheKey(key)) return false;
+    const item = result[key] as Partial<TransientStorageItem> | null;
+    return !isExpired(item?.expiry, now);
+  });
 
   const totalSize = translationKeys.reduce((acc, key) => {
     const item = result[key];
@@ -409,9 +414,13 @@ export async function clearSongCache(videoId: string): Promise<void> {
   if (!videoId) return;
   try {
     const prefix = `blyrics_${videoId}_`;
+    const geminiSegment = `_${videoId}_`;
     const result = await chrome.storage.local.get(null);
     const songKeys = Object.keys(result).filter(
-      key => key.startsWith(prefix) && !PROTECTED_STORAGE_KEYS.includes(key as (typeof PROTECTED_STORAGE_KEYS)[number])
+      key =>
+        (key.startsWith(prefix) &&
+          !PROTECTED_STORAGE_KEYS.includes(key as (typeof PROTECTED_STORAGE_KEYS)[number])) ||
+        (isTranslationCacheKey(key) && key.includes(geminiSegment))
     );
     await chrome.storage.local.remove(songKeys);
     await saveCacheInfo();

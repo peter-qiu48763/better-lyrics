@@ -1036,6 +1036,17 @@ body.is-editing .cm-scroller { scrollbar-width: thin; scrollbar-color: var(--scr
 .providers > li.disabled-item .ui-sync-tag,
 .providers > li.disabled-item .ui-badge { opacity: 0.5; }
 
+.gemini-api-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px var(--row-pad);
+}
+.gemini-api-panel[hidden] { display: none; }
+.gemini-api-panel__label { margin: 0; font-size: var(--font-size-sm); color: var(--text-label); }
+.gemini-api-panel__input { width: 100%; }
+.gemini-api-panel__actions { display: flex; gap: 8px; }
+
 .gemini-translation-mode-row {
   margin-top: 14px;
   padding-top: 12px;

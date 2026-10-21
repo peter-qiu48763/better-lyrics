@@ -20,10 +20,12 @@ if (files.length === 0) {
   process.exit(0);
 }
 
+const tsxCli = fileURLToPath(import.meta.resolve("tsx/cli"));
+
 for (const file of files) {
   const label = relative(repoRoot, file);
   console.log(`Running ${label}`);
-  const result = spawnSync("npx", ["tsx", file], { stdio: "inherit", cwd: repoRoot });
+  const result = spawnSync(process.execPath, [tsxCli, file], { stdio: "inherit", cwd: repoRoot });
   if (result.status !== 0) {
     console.error(`Self-check failed: ${label}`);
     process.exit(result.status ?? 1);

@@ -87,14 +87,6 @@
     "message": "Latest release notes",
     "description": "Popup General tab: one-line description on the What's new shortcut"
   },
-  "options_general_translationCacheSize": {
-    "message": "Translation cache size",
-    "description": "Translation cache size label"
-  },
-  "options_general_totalTranslations": {
-    "message": "Total translations in cache",
-    "description": "Total translations in cache label"
-  },
   "options_general_translationCountSub": {
     "message": "+ $COUNT$ translations",
     "description": "Translation count next to total lyrics number",
@@ -441,10 +433,6 @@
   "options_language_manageModelFallback": {
     "message": "Manage Model Fallback",
     "description": "Label for the settings trigger/modal to manage fallback options for Gemini models"
-  },
-  "options_language_clearTranslationCache": {
-    "message": "Clear Translation Cache",
-    "description": "Button label to clear cached Gemini/API translations"
   },
   "options_language_modelFallbackSequence": {
     "message": "Model Fallback Sequence",

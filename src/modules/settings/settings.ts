@@ -251,7 +251,6 @@ export function listenForPopupMessages(): void {
       applyLoggingSetting();
       hideCursorOnIdle();
       handleSettings();
-      loadTranslationSettings();
       loadLyricOffsetSettings();
       loadPassiveScrollSetting();
       loadKaraokeSettings(syncKaraoke);
@@ -271,7 +270,9 @@ export function listenForPopupMessages(): void {
         }
       );
       getAndApplyCustomStyles();
-      reloadLyrics();
+      loadTranslationSettings(() => {
+        reloadLyrics();
+      });
     } else if (request.action === "reloadLyrics") {
       reloadLyrics();
       sendResponse({ success: true });
@@ -421,7 +422,7 @@ export function hideDockOnIdleInFullscreen(): void {
 /**
  * Loads translation and romanization settings from storage and updates AppState.
  */
-export function loadTranslationSettings(): void {
+export function loadTranslationSettings(callback?: () => void): void {
   chrome.storage.local.get({ geminiApiKey: "" }, localItems => {
     getStorage(
       {
@@ -437,17 +438,16 @@ export function loadTranslationSettings(): void {
       items => {
         AppState.isTranslateEnabled = items.isTranslateEnabled;
         AppState.translationProvider = items.translationProvider || "google";
-        AppState.geminiApiKey = (localItems as any).geminiApiKey || "";
-        AppState.geminiModelFallback = items.geminiModelFallback || [
-          "gemini-3.1-flash-lite",
-          "gemini-3.5-flash-lite",
-          "gemini-3.6-flash",
-        ];
+        AppState.geminiApiKey = String((localItems as { geminiApiKey?: string }).geminiApiKey || "").trim();
+        AppState.geminiModelFallback = Array.isArray(items.geminiModelFallback)
+          ? items.geminiModelFallback
+          : ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash"];
         AppState.geminiTranslationMode = (items.geminiTranslationMode as "speed" | "quality") || "speed";
         AppState.isRomanizationEnabled = items.isRomanizationEnabled;
         AppState.translationLanguage = items.translationLanguage || "en";
         AppState.romanizationDisabledLanguages = items.romanizationDisabledLanguages || [];
         AppState.translationDisabledLanguages = items.translationDisabledLanguages || [];
+        callback?.();
       }
     );
   });

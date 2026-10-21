@@ -9,19 +9,27 @@ import type { BatchRequest, BatchTranslationResponse, TranslationResult } from "
  * Translates a batch of lyric lines using Gemini models with model fallback.
  */
 export async function translateBatchGemini(request: BatchRequest): Promise<BatchTranslationResponse> {
-  const { lines, targetLanguage, signal } = request;
+  const { lines, targetLanguage, sourceLanguage, scripts, signal } = request;
   if (!targetLanguage || lines.length === 0) {
     return { results: lines.map(() => null), detectedLanguage: "" };
   }
 
-  const videoId = AppState.lastLoadedVideoId;
+  const videoId = request.videoId || AppState.lastLoadedVideoId;
   const lineCount = lines.length;
-  const models =
+  const configuredModels =
     AppState.geminiModelFallback && AppState.geminiModelFallback.length > 0
       ? AppState.geminiModelFallback
       : ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash"];
-  const apiKey = AppState.geminiApiKey;
+  const models = configuredModels.filter(m => !m.startsWith("d_"));
+  const apiKey = AppState.geminiApiKey.trim();
   const lyricSource = AppState.currentProviderKey || "unknown";
+  const mode = AppState.geminiTranslationMode === "quality" ? "quality" : "speed";
+  const resolvedSourceLang = sourceLanguage || "";
+
+  if (models.length === 0) {
+    logCore(TRANSLATION_ERROR_LOG, "All Gemini models are disabled in fallback sequence");
+    return { results: lines.map(() => null), detectedLanguage: resolvedSourceLang };
+  }
 
   if (!apiKey) {
     logCore(TRANSLATION_ERROR_LOG, "Gemini API key is missing");
@@ -31,16 +39,17 @@ export async function translateBatchGemini(request: BatchRequest): Promise<Batch
   const results: (TranslationResult | null)[] = new Array(lines.length).fill(null);
 
   for (const model of models) {
-    const cacheKey = `gemini_${lyricSource}_${model}_${videoId}_${targetLanguage}_${lineCount}`;
+    const cacheKey = `gemini_${lyricSource}_${model}_${mode}_${videoId}_${targetLanguage}_${lineCount}`;
     try {
       const cachedData = await getTransientStorage(cacheKey);
       if (cachedData) {
         const cachedLines = JSON.parse(cachedData);
         if (Array.isArray(cachedLines) && cachedLines.length === lineCount) {
           cachedLines.forEach((t, i) => {
-            results[i] = { originalLanguage: "auto", translatedText: t };
+            const lineLang = scripts.detectScriptLanguage(lines[i]) || resolvedSourceLang;
+            results[i] = { originalLanguage: lineLang, translatedText: t };
           });
-          return { results, detectedLanguage: "auto", translationSource: model };
+          return { results, detectedLanguage: resolvedSourceLang, translationSource: model };
         }
       }
     } catch (e) {
@@ -124,13 +133,14 @@ Rules:
         }
 
         if (Array.isArray(parsedLines) && parsedLines.length === lineCount) {
-          const cacheKey = `gemini_${lyricSource}_${model}_${videoId}_${targetLanguage}_${lineCount}`;
+          const cacheKey = `gemini_${lyricSource}_${model}_${mode}_${videoId}_${targetLanguage}_${lineCount}`;
           await setTransientStorage(cacheKey, JSON.stringify(parsedLines), LYRICS_CACHE_TTL_MS);
 
           parsedLines.forEach((t, i) => {
-            results[i] = { originalLanguage: "auto", translatedText: t };
+            const lineLang = scripts.detectScriptLanguage(lines[i]) || resolvedSourceLang;
+            results[i] = { originalLanguage: lineLang, translatedText: t };
           });
-          return { results, detectedLanguage: "auto", translationSource: model };
+          return { results, detectedLanguage: resolvedSourceLang, translationSource: model };
         } else {
           logCore(TRANSLATION_ERROR_LOG, `Model ${model} returned ${parsedLines.length} lines, expected ${lineCount}`);
         }
@@ -141,5 +151,5 @@ Rules:
     }
   }
 
-  return { results, detectedLanguage: "auto", translationError: true };
+  return { results, detectedLanguage: resolvedSourceLang, translationError: true };
 }

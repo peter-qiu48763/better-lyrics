@@ -85,14 +85,6 @@
     "message": "最新版本資訊",
     "description": "Popup General tab: one-line description on the What's new shortcut"
   },
-  "options_general_translationCacheSize": {
-    "message": "翻譯快取大小",
-    "description": "Translation cache size label"
-  },
-  "options_general_totalTranslations": {
-    "message": "快取中的翻譯總數",
-    "description": "Total translations in cache label"
-  },
   "options_general_translationCountSub": {
     "message": "+ $COUNT$ 翻譯",
     "description": "Translation count next to total lyrics number",
@@ -432,10 +424,6 @@
   "options_language_manageModelFallback": {
     "message": "管理備用模型",
     "description": "Label for the settings trigger/modal to manage fallback options for Gemini models"
-  },
-  "options_language_clearTranslationCache": {
-    "message": "清除翻譯快取",
-    "description": "Button label to clear cached Gemini/API translations"
   },
   "options_language_modelFallbackSequence": {
     "message": "備用模型順序",

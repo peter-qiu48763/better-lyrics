@@ -1782,7 +1782,7 @@ function observeFooterForRecalc(footer: HTMLElement): void {
 }
 
 export function updateTranslationSource(source: string | null): void {
-  const footerRoot = document.querySelector(".blyrics-footer") || document.querySelector(".blyrics-footer__container");
+  const footerRoot = document.getElementsByClassName(FOOTER_CLASS)[0];
   if (!footerRoot) return;
 
   let capsule = document.getElementById("translation-source-capsule");
