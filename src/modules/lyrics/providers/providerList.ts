@@ -1,3 +1,5 @@
+import { ALL_GEMINI_MODELS, isGeminiModel } from "@constants";
+
 const stripDisabledPrefix = (id: string): string => (id.startsWith("d_") ? id.slice(2) : id);
 
 export function mergePreferredProviders(stored: readonly string[], defaults: readonly string[]): string[] {
@@ -22,4 +24,11 @@ export function mergePreferredProviders(stored: readonly string[], defaults: rea
   });
 
   return merged;
+}
+
+export function resolveGeminiFallbackModels(stored: readonly string[] | null | undefined): string[] {
+  const list = Array.isArray(stored) && stored.length > 0 ? stored : [...ALL_GEMINI_MODELS];
+  const merged = mergePreferredProviders(list, ALL_GEMINI_MODELS);
+  const filtered = merged.filter(entry => isGeminiModel(stripDisabledPrefix(entry)));
+  return filtered.length > 0 ? filtered : [...ALL_GEMINI_MODELS];
 }

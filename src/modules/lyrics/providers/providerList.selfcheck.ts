@@ -1,5 +1,5 @@
 import { strict as assert } from "node:assert";
-import { mergePreferredProviders } from "./providerList";
+import { mergePreferredProviders, resolveGeminiFallbackModels } from "./providerList";
 
 const defaults = ["a", "b", "unison-wordsynced", "c"];
 
@@ -43,6 +43,18 @@ assert.deepEqual(
   mergePreferredProviders(["a", "x", "b", "c"], defaults),
   ["a", "x", "b", "unison-wordsynced", "c"],
   "unknown stored keys are preserved and do not disturb insertion"
+);
+
+assert.deepEqual(
+  resolveGeminiFallbackModels(["gemini-old-model", "gemini-3.1-flash-lite"]),
+  ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash"],
+  "obsolete Gemini models are pruned while missing defaults are appended"
+);
+
+assert.deepEqual(
+  resolveGeminiFallbackModels(["d_gemini-3.5-flash-lite", "gemini-3.6-flash"]),
+  ["gemini-3.1-flash-lite", "d_gemini-3.5-flash-lite", "gemini-3.6-flash"],
+  "disabled states and custom ordering are preserved while missing defaults are added"
 );
 
 console.log("providerList selfcheck passed");

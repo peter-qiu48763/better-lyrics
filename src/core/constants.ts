@@ -481,3 +481,16 @@ export const PROVIDER_CONFIGS: ProviderConfig[] = [
 ] as const;
 
 export const LYRIC_SOURCE_KEYS = PROVIDER_CONFIGS.map(p => p.key);
+
+export const ALL_GEMINI_MODELS = [
+  "gemini-3.1-flash-lite",
+  "gemini-3.5-flash-lite",
+  "gemini-3.6-flash",
+] as const;
+
+type GeminiModel = (typeof ALL_GEMINI_MODELS)[number];
+
+export function isGeminiModel(model: string): model is GeminiModel {
+  return (ALL_GEMINI_MODELS as readonly string[]).includes(model);
+}
+

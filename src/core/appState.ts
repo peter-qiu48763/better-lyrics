@@ -1,4 +1,4 @@
-import { DOCK_CONTROL_ORDER_DEFAULT, DOCK_DEFAULT_POSITION } from "@constants";
+import { ALL_GEMINI_MODELS, DOCK_CONTROL_ORDER_DEFAULT, DOCK_DEFAULT_POSITION } from "@constants";
 import type { LyricDecorations, LyricsData } from "@modules/lyrics/injectLyrics";
 import { createLyrics, type ParsedLyrics } from "@modules/lyrics/lyrics";
 import type { LyricSourceKey } from "@modules/lyrics/providers/shared";
@@ -100,7 +100,7 @@ export const AppState: AppStateType = {
   isTranslateEnabled: false,
   translationProvider: "google",
   geminiApiKey: "",
-  geminiModelFallback: ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash"],
+  geminiModelFallback: [...ALL_GEMINI_MODELS],
   geminiTranslationMode: "speed",
   isRomanizationEnabled: false,
   romanizationDisabledLanguages: [],

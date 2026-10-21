@@ -1,9 +1,11 @@
 // Function to save user options
 
 import {
+  ALL_GEMINI_MODELS,
   DOCK_CONTROL_ORDER_DEFAULT,
   DOCK_DEFAULT_POSITION,
   GITHUB_REPO_URL,
+  isGeminiModel,
   ROMANIZATION_LANGUAGES,
   type SyncType,
   UNISON_API_BASE_URL,
@@ -44,7 +46,7 @@ import { KARAOKE_DEFAULTS } from "@modules/karaoke/defaults";
 import { syncTypeColors } from "@modules/ui/lyricsDock/icons";
 import { type FullscreenControlsPref, migrateFullscreenControlsPref } from "@modules/settings/fullscreenControls";
 import { migrateLetterWavePref, type LetterWavePref } from "@modules/settings/letterWave";
-import { mergePreferredProviders } from "@modules/lyrics/providers/providerList";
+import { mergePreferredProviders, resolveGeminiFallbackModels } from "@modules/lyrics/providers/providerList";
 import { fetchOwnGamification, renderIdentityStats } from "@modules/unison/gamificationRender";
 import type Sortable from "sortablejs";
 import { initializeThemes } from "@/options/editor/themesUi";
@@ -438,7 +440,7 @@ const restoreOptions = (): void => {
     isTranslateEnabled: false,
     translationProvider: "google",
     geminiApiKey: "",
-    geminiModelFallback: ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash"],
+    geminiModelFallback: [...ALL_GEMINI_MODELS],
     geminiTranslationMode: "speed",
     translationLanguage: "en",
     isRomanizationEnabled: false,
@@ -551,9 +553,7 @@ const setOptionsInForm = (items: Options): void => {
   (document.getElementById("translate") as HTMLInputElement).checked = items.isTranslateEnabled;
   setDropdownFieldValue("translationProvider", items.translationProvider || "google");
   (document.getElementById("geminiApiKey") as HTMLInputElement).value = items.geminiApiKey || "";
-  renderGeminiModelsList(
-    items.geminiModelFallback || ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash"]
-  );
+  renderGeminiModelsList(items.geminiModelFallback || [...ALL_GEMINI_MODELS]);
   setDropdownFieldValue("geminiTranslationMode", items.geminiTranslationMode || "speed");
   setDropdownFieldValue("translationLanguage", items.translationLanguage);
   (document.getElementById("isRomanizationEnabled") as HTMLInputElement).checked = items.isRomanizationEnabled;
@@ -811,12 +811,12 @@ function renderGeminiModelsList(storedModels: string[]) {
   if (!list) return;
   list.replaceChildren();
 
-  const ALL_GEMINI_MODELS = ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash"];
-  const mergedModels = mergePreferredProviders(storedModels, ALL_GEMINI_MODELS);
+  const mergedModels = resolveGeminiFallbackModels(storedModels);
 
   mergedModels.forEach(entry => {
     const isDisabled = entry.startsWith("d_");
     const model = isDisabled ? entry.slice(2) : entry;
+    if (!isGeminiModel(model)) return;
     const isChecked = !isDisabled;
     const liElem = document.createElement("li");
     liElem.classList.add("ui-row", "sortable-item");
@@ -1588,7 +1588,7 @@ function initLangExclusionsModal(): void {
   if (resetFallbackBtn) {
     resetFallbackBtn.textContent = t("options_resetToDefault", t("options_language_sequence"));
     resetFallbackBtn.addEventListener("click", () => {
-      const defaultFallback = ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash"];
+      const defaultFallback = [...ALL_GEMINI_MODELS];
       renderGeminiModelsList(defaultFallback);
       setDropdownFieldValue("geminiTranslationMode", "speed");
       saveOptions();

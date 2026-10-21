@@ -1,4 +1,5 @@
 import {
+  ALL_GEMINI_MODELS,
   DISABLE_EFFECTS_STYLE_ID,
   DOCK_CLASS,
   DOCK_CONTROL_ORDER_DEFAULT,
@@ -13,6 +14,7 @@ import { configureLogging, logContent } from "@core/logger";
 import { syncKaraoke } from "@modules/karaoke/karaokeView";
 import { loadKaraokeSettings } from "@modules/karaoke/settings";
 import { migrateFullscreenControlsPref } from "@modules/settings/fullscreenControls";
+import { resolveGeminiFallbackModels } from "@modules/lyrics/providers/providerList";
 import { clearCache as clearTranslationCache } from "@modules/lyrics/translation";
 import { mountDock, mountVotingSegment, reloadAlbumArt, unmountDock, updateDockPosition } from "@modules/ui/dom";
 import { applyGlobalOffsets } from "@modules/ui/lyricsDock/offset";
@@ -428,7 +430,7 @@ export function loadTranslationSettings(callback?: () => void): void {
       {
         isTranslateEnabled: false,
         translationProvider: "google",
-        geminiModelFallback: ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash"],
+        geminiModelFallback: [...ALL_GEMINI_MODELS],
         geminiTranslationMode: "speed",
         isRomanizationEnabled: false,
         translationLanguage: "en",
@@ -439,9 +441,7 @@ export function loadTranslationSettings(callback?: () => void): void {
         AppState.isTranslateEnabled = items.isTranslateEnabled;
         AppState.translationProvider = items.translationProvider || "google";
         AppState.geminiApiKey = String((localItems as { geminiApiKey?: string }).geminiApiKey || "").trim();
-        AppState.geminiModelFallback = Array.isArray(items.geminiModelFallback)
-          ? items.geminiModelFallback
-          : ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash"];
+        AppState.geminiModelFallback = resolveGeminiFallbackModels(items.geminiModelFallback);
         AppState.geminiTranslationMode = (items.geminiTranslationMode as "speed" | "quality") || "speed";
         AppState.isRomanizationEnabled = items.isRomanizationEnabled;
         AppState.translationLanguage = items.translationLanguage || "en";

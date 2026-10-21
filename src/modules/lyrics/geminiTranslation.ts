@@ -1,4 +1,4 @@
-import { TRANSLATION_ERROR_LOG, LYRICS_CACHE_TTL_MS } from "@constants";
+import { ALL_GEMINI_MODELS, isGeminiModel, LYRICS_CACHE_TTL_MS, TRANSLATION_ERROR_LOG } from "@constants";
 import { AppState } from "@core/appState";
 import { getLanguageDisplayName } from "@core/i18n";
 import { logCore } from "@core/logger";
@@ -19,8 +19,8 @@ export async function translateBatchGemini(request: BatchRequest): Promise<Batch
   const configuredModels =
     AppState.geminiModelFallback && AppState.geminiModelFallback.length > 0
       ? AppState.geminiModelFallback
-      : ["gemini-3.1-flash-lite", "gemini-3.5-flash-lite", "gemini-3.6-flash"];
-  const models = configuredModels.filter(m => !m.startsWith("d_"));
+      : ALL_GEMINI_MODELS;
+  const models = configuredModels.filter(m => !m.startsWith("d_") && isGeminiModel(m));
   const apiKey = AppState.geminiApiKey.trim();
   const lyricSource = AppState.currentProviderKey || "unknown";
   const mode = AppState.geminiTranslationMode === "quality" ? "quality" : "speed";
