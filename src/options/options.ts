@@ -111,6 +111,7 @@ interface Options extends VideoQualitySettings {
   geminiApiKey: string;
   geminiModelFallback: string[];
   geminiTranslationMode?: "speed" | "quality";
+  isGeminiPreTranslateEnabled: boolean;
   translationLanguage: string;
   isCursorAutoHideEnabled: boolean;
   isRomanizationEnabled: boolean;
@@ -196,6 +197,7 @@ const getOptionsFromForm = (): Options => {
     }),
     geminiTranslationMode: ((document.getElementById("geminiTranslationMode") as HTMLInputElement | null)?.value ||
       "speed") as "speed" | "quality",
+    isGeminiPreTranslateEnabled: (document.getElementById("isGeminiPreTranslateEnabled") as HTMLInputElement).checked,
     translationLanguage: (document.getElementById("translationLanguage") as HTMLInputElement).value,
     isCursorAutoHideEnabled: (document.getElementById("cursorAutoHide") as HTMLInputElement).checked,
     isRomanizationEnabled: (document.getElementById("isRomanizationEnabled") as HTMLInputElement).checked,
@@ -442,6 +444,7 @@ const restoreOptions = (): void => {
     geminiApiKey: "",
     geminiModelFallback: [...ALL_GEMINI_MODELS],
     geminiTranslationMode: "speed",
+    isGeminiPreTranslateEnabled: false,
     translationLanguage: "en",
     isRomanizationEnabled: false,
     preferredProviderList: [
@@ -555,6 +558,8 @@ const setOptionsInForm = (items: Options): void => {
   (document.getElementById("geminiApiKey") as HTMLInputElement).value = items.geminiApiKey || "";
   renderGeminiModelsList(items.geminiModelFallback || [...ALL_GEMINI_MODELS]);
   setDropdownFieldValue("geminiTranslationMode", items.geminiTranslationMode || "speed");
+  (document.getElementById("isGeminiPreTranslateEnabled") as HTMLInputElement).checked =
+    items.isGeminiPreTranslateEnabled ?? false;
   setDropdownFieldValue("translationLanguage", items.translationLanguage);
   (document.getElementById("isRomanizationEnabled") as HTMLInputElement).checked = items.isRomanizationEnabled;
   setDropdownFieldValue("uiLanguage", resolveUiLanguage(items.uiLanguage));

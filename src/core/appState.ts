@@ -48,6 +48,7 @@ interface AppStateType {
   geminiApiKey: string;
   geminiModelFallback: string[];
   geminiTranslationMode: "speed" | "quality";
+  isGeminiPreTranslateEnabled: boolean;
   isRomanizationEnabled: boolean;
   romanizationDisabledLanguages: string[];
   translationDisabledLanguages: string[];
@@ -102,6 +103,7 @@ export const AppState: AppStateType = {
   geminiApiKey: "",
   geminiModelFallback: [...ALL_GEMINI_MODELS],
   geminiTranslationMode: "speed",
+  isGeminiPreTranslateEnabled: false,
   isRomanizationEnabled: false,
   romanizationDisabledLanguages: [],
   translationDisabledLanguages: [],

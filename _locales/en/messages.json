@@ -430,6 +430,14 @@
     "message": "Enter your Gemini API key...",
     "description": "Placeholder in the input field for Gemini API key"
   },
+  "options_language_geminiPreTranslate": {
+    "message": "Allow pre-translating the next song",
+    "description": "Label for setting switch to enable pre-translating lyrics of the next song with Gemini"
+  },
+  "options_language_geminiPreTranslateTooltip": {
+    "message": "Pre-translates upcoming lyrics using Gemini API to display translated lyrics instantly when switching tracks.",
+    "description": "Tooltip explaining the pre-translation feature using Gemini API"
+  },
   "options_language_manageModelFallback": {
     "message": "Manage Model Fallback",
     "description": "Label for the settings trigger/modal to manage fallback options for Gemini models"

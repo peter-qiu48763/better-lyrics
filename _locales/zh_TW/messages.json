@@ -421,6 +421,14 @@
     "message": "輸入您的 Gemini API 金鑰...",
     "description": "Placeholder in the input field for Gemini API key"
   },
+  "options_language_geminiPreTranslate": {
+    "message": "允許預翻譯下一首歌曲",
+    "description": "Label for setting switch to enable pre-translating lyrics of the next song with Gemini"
+  },
+  "options_language_geminiPreTranslateTooltip": {
+    "message": "在切換歌曲前預先使用 Gemini API 翻譯下一首歌詞，切歌時即可立即顯示翻譯。",
+    "description": "Tooltip explaining the pre-translation feature using Gemini API"
+  },
   "options_language_manageModelFallback": {
     "message": "管理備用模型",
     "description": "Label for the settings trigger/modal to manage fallback options for Gemini models"

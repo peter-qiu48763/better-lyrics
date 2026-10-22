@@ -11,6 +11,7 @@ import {
 import { AppState } from "@core/appState";
 import { t } from "@core/i18n";
 import { applySegmentMapToLyrics, type LyricSourceResultWithMeta } from "@modules/lyrics/lyrics";
+import { getGeminiTranslationBatchItems } from "@modules/lyrics/geminiTranslation";
 import type { LyricPart } from "@modules/lyrics/providers/shared";
 import { createScriptClassifier, type ScriptClassifier } from "@modules/lyrics/nonLatinScript";
 import {
@@ -254,17 +255,6 @@ async function processBatchTranslationsAndRomanizations(
   const isRomanizationEnabled = AppState.isRomanizationEnabled;
   const isTranslateEnabled = AppState.isTranslateEnabled;
   const isGeminiProvider = AppState.translationProvider === "gemini";
-  const hasFileTranslation = lyrics.some(
-    item =>
-      (item.translations &&
-        Object.entries(item.translations).some(
-          ([lang, text]) => langCodesMatch(targetTranslationLang, lang) && Boolean(text?.trim())
-        )) ||
-      (item.translation &&
-        langCodesMatch(targetTranslationLang, item.translation.lang) &&
-        Boolean(item.translation.text?.trim()))
-  );
-  const skipTranslationBatch = isGeminiProvider && (keepLoaderVisible || hasFileTranslation);
 
   const romanizationBatch: { index: number; text: string }[] = [];
   const translationBatch: { index: number; text: string }[] = [];
@@ -335,7 +325,7 @@ async function processBatchTranslationsAndRomanizations(
       } else if (item.translation && findBestLanguageMatch(targetTranslationLang, [item.translation.lang])) {
         translationResult = item.translation.text;
         translationLanguage = item.translation.lang;
-      } else {
+      } else if (!isGeminiProvider) {
         const cached = getTranslationFromCache(item.words, targetTranslationLang);
         if (cached && !isTranslationDisabledForLang(cached.originalLanguage)) {
           translationResult = cached.translatedText;
@@ -346,11 +336,26 @@ async function processBatchTranslationsAndRomanizations(
         injectTranslation(doc, lyricElement, translationResult, translationLanguage);
         recordLyricDecoration(index, { translation: translationResult, translationLanguage });
         didInjectCachedContent = true;
-      } else if (!skipTranslationBatch && (sourceLanguage !== targetTranslationLang || scripts.hasNonLatinScript(item.words) || !sourceLanguage)) {
+      } else if (
+        !isGeminiProvider &&
+        (sourceLanguage !== targetTranslationLang || scripts.hasNonLatinScript(item.words) || !sourceLanguage)
+      ) {
         translationBatch.push({ index, text: item.words });
       }
     }
   });
+
+  if (isGeminiProvider && isTranslateEnabled && !keepLoaderVisible) {
+    translationBatch.push(
+      ...getGeminiTranslationBatchItems(
+        lyrics,
+        sourceLanguage,
+        targetTranslationLang,
+        scripts,
+        isTranslationDisabledForLang
+      )
+    );
+  }
 
   if (didInjectCachedContent) {
     lyricsElementAdded();
@@ -370,6 +375,7 @@ async function processBatchTranslationsAndRomanizations(
           targetLanguage: targetTranslationLang,
           sourceLanguage: sourceLanguage || undefined,
           videoId: data.videoId,
+          providerKey: data.providerKey,
           signal,
         });
         if (isStale()) return;
@@ -404,6 +410,7 @@ async function processBatchTranslationsAndRomanizations(
           targetLanguage: targetTranslationLang,
           sourceLanguage: sourceLanguage || undefined,
           videoId: data.videoId,
+          providerKey: data.providerKey,
           signal,
         });
         if (isStale()) return;
@@ -425,7 +432,12 @@ async function processBatchTranslationsAndRomanizations(
             const originalIndex = translationBatch[i].index;
             const originalText = translationBatch[i].text;
             if (!isSameText(result.translatedText, originalText)) {
-              injectTranslation(doc, linesData[originalIndex].lyricElement, result.translatedText, targetTranslationLang);
+              injectTranslation(
+                doc,
+                linesData[originalIndex].lyricElement,
+                result.translatedText,
+                targetTranslationLang
+              );
               recordLyricDecoration(originalIndex, {
                 translation: result.translatedText,
                 translationLanguage: targetTranslationLang,

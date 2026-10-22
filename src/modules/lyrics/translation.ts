@@ -35,6 +35,7 @@ export interface BatchRequest {
   targetLanguage?: string; // For translations
   sourceLanguage?: string; // For romanizations
   videoId?: string;
+  providerKey?: string;
   signal?: AbortSignal;
 }
 

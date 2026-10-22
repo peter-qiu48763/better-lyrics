@@ -29,6 +29,7 @@ import type { YTLyricSourceResult } from "./providers/yt";
 import { getSongAlbum, getSongMetadata, type SegmentMap } from "./requestSniffer/requestSniffer";
 import { getSegmentMapTimeShiftMs } from "@modules/lyrics/segmentMap";
 import { clearMemoryTranslationCache } from "./translation";
+import { preTranslateLyricsGemini } from "./geminiTranslation";
 import { mainView } from "@modules/ui/mainLyricsView";
 import { resetPlaybackClock, resumeAllAutoscroll } from "@braccato/core";
 import { registerThemeSetting } from "@braccato/core/themeSettings";
@@ -140,8 +141,12 @@ function unisonLyricIn(sourceMap: SourceMapType): (UnisonLyric & { vote: number 
   return null;
 }
 
-async function resolvePin(videoId: string, providerParameters: ProviderParameters): Promise<LyricSourceKey | null> {
-  const manual = AppState.manualProviderKey;
+async function resolvePin(
+  videoId: string,
+  providerParameters: ProviderParameters,
+  includeManual = true
+): Promise<LyricSourceKey | null> {
+  const manual = includeManual ? AppState.manualProviderKey : null;
   const stored = manual ? null : await loadProviderPin(videoId);
   const pinned = manual ?? stored?.key ?? null;
   if (!pinned) return null;
@@ -538,7 +543,10 @@ export async function preFetchLyrics(
     logCore(err);
   }
 
-  for (let provider of providerPriority) {
+  const pinnedProvider = await resolvePin(detail.videoId, providerParameters, false);
+  const orderedProviders = orderByPin(providerPriority, pinnedProvider);
+
+  for (let provider of orderedProviders) {
     if (signal.aborted) {
       return;
     }
@@ -547,6 +555,28 @@ export async function preFetchLyrics(
       let sourceLyrics = await getLyrics(providerParameters, provider);
 
       if (sourceLyrics && sourceLyrics.lyrics && sourceLyrics.lyrics.length > 0) {
+        if (hideInstrumentalOnly.getBooleanValue() && isInstrumentalOnly(sourceLyrics.lyrics)) {
+          continue;
+        }
+
+        if (
+          AppState.isTranslateEnabled &&
+          AppState.translationProvider === "gemini" &&
+          AppState.isGeminiPreTranslateEnabled &&
+          AppState.geminiApiKey.trim()
+        ) {
+          try {
+            await preTranslateLyricsGemini(
+              sourceLyrics.lyrics,
+              provider,
+              providerParameters.videoId,
+              sourceLyrics.language,
+              signal
+            );
+          } catch (err) {
+            logCore("Pre-translation error", err);
+          }
+        }
         break;
       }
     } catch (err) {

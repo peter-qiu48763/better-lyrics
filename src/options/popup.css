@@ -1045,6 +1045,13 @@ body.is-editing .cm-scroller { scrollbar-width: thin; scrollbar-color: var(--scr
 .gemini-api-panel[hidden] { display: none; }
 .gemini-api-panel__label { margin: 0; font-size: var(--font-size-sm); color: var(--text-label); }
 .gemini-api-panel__input { width: 100%; }
+.gemini-pretranslate-row {
+  min-height: 0;
+  padding: 4px 0;
+}
+.gemini-pretranslate-row:hover {
+  background: none;
+}
 .gemini-api-panel__actions { display: flex; gap: 8px; }
 
 .gemini-translation-mode-row {

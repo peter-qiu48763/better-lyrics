@@ -432,6 +432,7 @@ export function loadTranslationSettings(callback?: () => void): void {
         translationProvider: "google",
         geminiModelFallback: [...ALL_GEMINI_MODELS],
         geminiTranslationMode: "speed",
+        isGeminiPreTranslateEnabled: false,
         isRomanizationEnabled: false,
         translationLanguage: "en",
         romanizationDisabledLanguages: [],
@@ -443,6 +444,7 @@ export function loadTranslationSettings(callback?: () => void): void {
         AppState.geminiApiKey = String((localItems as { geminiApiKey?: string }).geminiApiKey || "").trim();
         AppState.geminiModelFallback = resolveGeminiFallbackModels(items.geminiModelFallback);
         AppState.geminiTranslationMode = (items.geminiTranslationMode as "speed" | "quality") || "speed";
+        AppState.isGeminiPreTranslateEnabled = items.isGeminiPreTranslateEnabled ?? false;
         AppState.isRomanizationEnabled = items.isRomanizationEnabled;
         AppState.translationLanguage = items.translationLanguage || "en";
         AppState.romanizationDisabledLanguages = items.romanizationDisabledLanguages || [];

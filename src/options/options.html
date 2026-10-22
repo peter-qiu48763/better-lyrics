@@ -232,6 +232,13 @@
 							<div class="gemini-api-panel" id="geminiApiContainer" hidden="">
 								<p class="gemini-api-panel__label">__MSG_options_language_geminiApiSettings__</p>
 								<input type="password" id="geminiApiKey" class="ui-field gemini-api-panel__input" placeholder="__MSG_options_language_geminiApiKeyPlaceholder__">
+								<div class="ui-row gemini-pretranslate-row">
+									<span class="ui-row__label">
+										<span id="geminiPreTranslateLabel">__MSG_options_language_geminiPreTranslate__</span>
+										<span class="setting-help" tabindex="0" data-tooltip="__MSG_options_language_geminiPreTranslateTooltip__" aria-label="__MSG_options_language_geminiPreTranslateTooltip__">?</span>
+									</span>
+									<label class="ui-switch"><input type="checkbox" role="switch" class="ui-switch__input" id="isGeminiPreTranslateEnabled" aria-labelledby="geminiPreTranslateLabel"><span class="ui-switch__track" aria-hidden="true"></span></label>
+								</div>
 								<div class="gemini-api-panel__actions">
 									<button class="ui-button ui-button--compact" id="gemini-models-btn" type="button">
 										__MSG_options_language_manageModelFallback__
