@@ -135,6 +135,10 @@
     "message": "字母波浪",
     "description": "Label for the per-letter wave lyric animation toggle"
   },
+  "options_display_fullscreenControlsTooltipStates": {
+    "message": "「自動」會在顯示播放列時隱藏控制項；「開啟」則會讓控制項保持顯示。",
+    "description": "Tooltip for the fullscreen player controls three-way switch, explaining the Auto and On states"
+  },
   "options_display_letterWaveOff": {
     "message": "關閉",
     "description": "Spoken value of the letter wave three-way switch when the effect is off"
@@ -176,7 +180,7 @@
     "description": "Accessible label for the pause button in the Picture-in-Picture lyrics window, used when the YouTube Music player bar exposes no label of its own"
   },
   "picture_in_picture_fitWindow": {
-    "message": "Fit window",
+    "message": "符合視窗大小",
     "description": "Tooltip and accessible label for the selected song/video button in the Picture-in-Picture lyrics window when the window size no longer matches its content; clicking it resizes the window to fit"
   },
   "picture_in_picture_next": {
